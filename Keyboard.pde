@@ -69,13 +69,13 @@ class Keyboard
      		.addListener(myListner);;
      		
      		//delete
-     		cp5.addButton(key4[1])
+     		Button temp = cp5.addButton(key4[1])
      		.setValue(0+31)
      		.setPosition(  rowFourX + 2*spacing*scaleFactor + buttonWidth*5 , rowFourY )
      		.setSize(buttonWidth *2,buttonHeight)
      		.addListener(myListner);;
      				
-     		
+     		print(temp.getPosition().x);
 	}
 	
 	

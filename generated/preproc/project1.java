@@ -19,6 +19,21 @@ import java.util.regex.*;
 
 public class project1 extends PApplet {
 
+class CountryPDE
+{
+	String country;
+	Button button;
+	
+	CountryPDE(String country, Button button)
+	{
+		this.country = country;
+		this.button = button;
+		
+		
+		
+		
+	}
+}
 class CountrySearch
 {
 	 int x,y;
@@ -120,7 +135,7 @@ class CountrySelect
 	{
 		l = cp5.addListBox("Country List")
          .setPosition(countrySearch.x + spacing*scaleFactor, distancefromTop * scaleFactor)
-         .setSize(countrySearch.cWidth - spacing*2*scaleFactor, countrySearch.y - 2*spacing*scaleFactor - inputHeight*scaleFactor)
+         .setSize(countrySearch.cWidth - spacing*2*scaleFactor, height/2 - scaleFactor * spacing * 3 - distancefromTop)
          .setItemHeight(textFontSize*scaleFactor)
          .setBarHeight(textFontSize*scaleFactor + 10*scaleFactor)
         // .setColorActive(color(255, 128))
@@ -129,6 +144,8 @@ class CountrySelect
          
          MyControlListener my = new MyControlListener();
          l.addListener(my);
+         
+         
 
   
 	}
@@ -152,9 +169,26 @@ class CountrySelect
     	public void controlEvent(ControlEvent theEvent) 
     	{
     		int index = ((int)theEvent.getValue());
-    		println(oldList[index]);
+    		showSelectedCountries.addCountry(oldList[index]);
     	}
     }
+}
+class Graph
+{
+	int x,y;
+	
+	Graph()
+	{
+		x = width/2;
+		y = height/2;		
+		
+	}
+	
+	public void drawGraph()
+	{
+		rect(x,y,100,100);
+		fill(200);
+	}
 }
 class Keyboard
 {
@@ -227,13 +261,13 @@ class Keyboard
      		.addListener(myListner);;
      		
      		//delete
-     		cp5.addButton(key4[1])
+     		Button temp = cp5.addButton(key4[1])
      		.setValue(0+31)
      		.setPosition(  rowFourX + 2*spacing*scaleFactor + buttonWidth*5 , rowFourY )
      		.setSize(buttonWidth *2,buttonHeight)
      		.addListener(myListner);;
      				
-     		
+     		print(temp.getPosition().x);
 	}
 	
 	
@@ -247,23 +281,152 @@ class Keyboard
   	}
 	
 }
-class ShowSelectedCountries
+class Label
 {
-	String[] selectedCountries;
+	String country;
+	int xPosition,yPosition;
+	CColor countryColor;
+	Button but;
 	
-	ShowSelectedCountries()
-	{
-		selectedCountries = new String[5];
-	}
 	
-	public void showSelectedCountries()
+	
+	Label(String country,CColor countryColor,int xPosition,int yPosition)
 	{
-		selectedCountries = kevin.getCountry();
+		this.country = country;
+		this.countryColor = countryColor;
+		this.xPosition = xPosition;
+		this.yPosition = yPosition;
+		
+		drawLabel();
 		
 	}
 	
+	public void drawLabel()
+	{
+		
+		
+		MyControlListener mys = new MyControlListener();
+		
+		but = cp5.addButton(country)
+     .setValue(100)
+     .setPosition(xPosition,yPosition)
+     .setSize(200*scaleFactor,40*scaleFactor)
+     .setColor(countryColor)
+     .addListener(mys);
+                   
+         
+         
+	}
+	
+	public void removeLabel()
+	{
+		but.remove();
+	}
+	
+	class MyControlListener implements ControlListener 
+	{
+    	public void controlEvent(ControlEvent theEvent) 
+    	{
+    		
+    		showSelectedCountries.removeCountry("");
+    	}
+    }
+}
+class MapS
+{ 
+	int x,y;
+	
+	MapS()
+	{
+		x = width/2;
+		y = height/2;		
+		
+	}
+	
+	public void drawMap()
+	{
+		rect(x,y,100,100);
+		fill(100);
+	}
+}
+class ShowSelectedCountries
+{
+	int xPosition,yPosition;
 	
 	
+	ArrayList availableColors = new ArrayList();
+	HashMap selectedCountry = new HashMap(); // country , label class
+	
+	
+	
+	ShowSelectedCountries()
+	{
+		init();
+				
+		xPosition = (int) width/5 + spacing*scaleFactor*4;
+		yPosition = distancefromTop*scaleFactor - inputHeight * scaleFactor;
+					
+	}
+	
+	public void init()
+	{
+		 availableColors.add( new CColor(0xffcdc9c9, 0xff66CD00, 0xfff0ffff,  0xff4169e1, 0xffff0000)  ) ;
+		 availableColors.add( new CColor(0xffcdc9c9, 0xff39B7CD, 0xfff0ffff,  0xff4169e1, 0xffff0000)  ) ;
+		 availableColors.add( new CColor(0xffcdc9c9, 0xff8E388E, 0xfff0ffff,  0xff4169e1, 0xffff0000)  ) ;	
+	}
+	
+	public void addCountry(String country)
+	{
+		if(availableColors.size() > 0)
+		{	
+			CColor temp = ((CColor)availableColors.get(0));	
+			availableColors.remove(0);
+			
+			int i = selectedCountry.keySet().size();
+			
+			int yPos = yPosition + i * scaleFactor * (spacing + 40 );
+			
+			Label label = new Label(country,temp,xPosition,yPos);
+			selectedCountry.put(country,label);
+		}
+		else
+		{
+			println("Max country limit reached");
+		}
+	}
+	
+	public void removeCountry(String country)
+	{
+		Label deleted = (Label) selectedCountry.remove(country);
+		println(deleted);
+		availableColors.add(deleted.countryColor);
+		deleted.removeLabel();
+		
+		redrawList();
+	}
+	
+	public void redrawList()
+	{
+		int i = 0;
+		for(String country : (String)selectedCountry.keySet() )
+		{
+			Label toShift = (Label) selectedCountry.remove(country);
+			CColor cc = toShift.countryColor;
+			toShift.removeLabel();
+			
+			int yPos = yPosition + i * scaleFactor * (spacing + 40 );
+			Label label = new Label(country,cc,xPosition,yPos);
+			selectedCountry.put(country,label);
+			
+			i++;
+			
+			
+		}
+
+		
+		
+	}
+		
 }
 
 
@@ -272,22 +435,27 @@ ControlP5 cp5;
 CountrySearch countrySearch;
 Keyboard keyboard;
 CountrySelect countrySelect;
+MapS mapS;
+Graph graph;
+ShowSelectedCountries showSelectedCountries;
 
 Kevin kevin;
 
-int spacing = 10;
+
+int spacing = 5;
 int textFontSize = 15;
 int scaleFactor = 1;
 int inputHeight = 30;
-int distancefromTop = 50;
+int distancefromTop = 100;
+boolean flag = true;
 
 public void setup()
 {
 	size(1360,384);
-	background(139,139,137);
+	//background(139,139,137);
 
 	cp5 = new ControlP5(this);
-	CColor cc = new CColor(0xffcdc9c9, 0xffcdc9c9, 0xfff0ffff,  0xff4169e1, 0xffff0000) ;
+	CColor cc = new CColor(0xffcdc9c9, 0xffcdc9c9, 0xfff0ffff,  0xff2E0854, 0xffff0000) ;
 	cp5.setColor(cc);
 	
 	PFont font = createFont("SansSerif", textFontSize*scaleFactor);
@@ -297,6 +465,9 @@ public void setup()
 	countrySearch = new CountrySearch();
 	keyboard      = new Keyboard(); 
 	countrySelect = new CountrySelect();
+	mapS = new MapS();
+	graph = new Graph();
+	showSelectedCountries = new ShowSelectedCountries();
 	
 	// java classes
 	kevin = new Kevin();
@@ -307,7 +478,27 @@ public void draw()
 	//countrySearch.drawText();
 	//countrySearch.showCountrySuggestions();
 	 background(20);
+	 
+	 if(flag)
+	 {
+	 
+	 mapS.drawMap();
+	 }
+	 else
+	 graph.drawGraph();
+	 
 	
+}
+
+public void mousePressed()
+{
+	 if (mouseY > 0 && mouseX > width/2)
+	 {
+	 	print("second half");
+	 	flag = !flag;
+	 	
+	 	
+	 }
 } 
 
 public void controlEvent(ControlEvent theEvent) 
@@ -319,10 +510,12 @@ public void controlEvent(ControlEvent theEvent)
             +theEvent.getStringValue()
             );
   }
+  
   else if(theEvent.isAssignableFrom(Button.class))
   {  
   	 
   }
+  
 }
 
     static public void main(String args[]) {

@@ -7,7 +7,7 @@ class CountrySelect
 	{
 		l = cp5.addListBox("Country List")
          .setPosition(countrySearch.x + spacing*scaleFactor, distancefromTop * scaleFactor)
-         .setSize(countrySearch.cWidth - spacing*2*scaleFactor, countrySearch.y - 2*spacing*scaleFactor - inputHeight*scaleFactor)
+         .setSize(countrySearch.cWidth - spacing*2*scaleFactor, height/2 - scaleFactor * spacing * 3 - distancefromTop)
          .setItemHeight(textFontSize*scaleFactor)
          .setBarHeight(textFontSize*scaleFactor + 10*scaleFactor)
         // .setColorActive(color(255, 128))
@@ -16,6 +16,8 @@ class CountrySelect
          
          MyControlListener my = new MyControlListener();
          l.addListener(my);
+         
+         
 
   
 	}
@@ -39,7 +41,7 @@ class CountrySelect
     	public void controlEvent(ControlEvent theEvent) 
     	{
     		int index = ((int)theEvent.getValue());
-    		println(oldList[index]);
+    		showSelectedCountries.addCountry(oldList[index]);
     	}
     }
 }

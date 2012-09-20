@@ -1,5 +1,7 @@
 import java.util.HashMap;
 
+import controlP5.CColor;
+
 
 public class Country
 {
@@ -7,6 +9,7 @@ public class Country
 
 	String name;
 	String[] energy_consumption = new String[30];
+	CColor color;
 		
 	Country(String name)
 	{
