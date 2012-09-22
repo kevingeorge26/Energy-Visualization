@@ -31,6 +31,7 @@ public class Atlas
 				i++;
 			}
 		}
+		
 	}
 
 
@@ -38,6 +39,10 @@ public class Atlas
 	public Atlas()
 	{		
 		loadEnergyProduction();
+		
+
+		
+		
 	}
 
 	public String[] getEnergyProduction(String countryName)

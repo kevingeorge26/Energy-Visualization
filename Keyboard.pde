@@ -7,6 +7,7 @@ class Keyboard
 	
 	
 	int buttonWidth,buttonHeight;
+	int rowTwoY;   // using the same y co-ordinate to place the year slider
 	
 	Keyboard()
 	{	
@@ -32,7 +33,7 @@ class Keyboard
      		}
      		
      		int rowTwoX = rowOneX + buttonWidth/2;
-     		int rowTwoY = rowOneY + buttonHeight + spacing*scaleFactor;
+     		rowTwoY = rowOneY + buttonHeight + spacing*scaleFactor;
      		
      		
      		for (int i = 0 ; i < key2.length ; i++)

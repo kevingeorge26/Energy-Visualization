@@ -19,6 +19,94 @@ import java.util.regex.*;
 
 public class project1 extends PApplet {
 
+class Checkbox
+{
+	// the length for the longest checkbox will be used as sliders length
+	// the xpos for the checkbox will be used as the xpos of the slider
+	
+	int xPos,yPos;
+	PFont font;
+	String label;
+	int checkboxHeight;
+	int textWidthLabel;
+	boolean isChecked;
+	Attribute attr;
+	
+	Checkbox(int xPos,int yPos, PFont font,Attribute attr)
+	{
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.font = font;
+		this.label = label;
+		this.attr = attr;
+		this.label = attr.getLabel();
+		
+		isChecked = false;
+	}
+	
+	public void drawCheckbox()
+	{
+		stroke(255);
+		fill(255);		
+		textFont(font);
+		textAlign(LEFT);
+		
+		int textHeight = (int)textAscent();
+		checkboxHeight = textHeight;		
+		textWidthLabel = (int)textWidth(label);
+		
+		text(label,xPos + textHeight*2,yPos+textHeight);		
+		if(isChecked)
+		{
+			fill(255);
+		}
+		else
+		{
+			noFill();
+		}
+		rect(xPos,yPos,textHeight,textHeight);
+		
+		// set the lenght for slider
+		if(attr == Attribute.ENERGY_CONSUMPTION_CAPITA)
+		{
+			if(showAttribute.sliderLength == 0)
+			{
+						
+				showAttribute.sliderLength = textWidthLabel + 3*textHeight;			
+				
+			}
+		}
+		
+	}
+	
+	public void handleChecked(int xClick,int yClick)
+	{
+		int endX = xPos + 2*checkboxHeight + textWidthLabel;
+		int endY = yPos + checkboxHeight;
+		
+		if( isChecked || ( showAttribute.noOfAttributeSelected < 2 ) )
+		{		
+			if(xClick < endX && xClick >xPos)
+			{
+				if(yClick < endY && yClick > yPos)
+				{
+					if( isChecked )
+					{
+						showAttribute.trackUnselectedAttribute(attr);
+						
+					}
+					else
+					{
+						showAttribute.trackSelectedAttribute(attr);
+					}
+					
+					isChecked = !isChecked;
+				
+				}
+			}
+		}
+	}
+}
 class CountryPDE
 {
 	String country;
@@ -96,34 +184,6 @@ class CountrySearch
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/*
-	void addToText(char ch)
-	{
-		currentTyped = currentTyped + ch;
-		
-	}
-	
-	void drawText()
-	{
-		textSize(textFontSize);
-		text(currentTyped,x+spacing,y+spacing,cWidth-spacing,30);
-		fill(0, 102, 153);
-	}*/
-	
-	
 }
 
 class CountrySelect
@@ -175,20 +235,184 @@ class CountrySelect
 }
 class Graph
 {
-	int x,y;
+	int xPos,yPos,xLength,yLength;
 	
-	Graph()
+	
+	int plotX1,plotX2,plotY1,plotY2;
+	int scaleColor;
+	int padding = 100 * scaleFactor;
+	
+	Graph(int xPos,int yPos, int xLength , int yLength)
 	{
-		x = width/2;
-		y = height/2;		
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.xLength = xLength;
+		this.yLength = yLength;
+	}
+	
+	public void refreshGraph()
+	{
+		createAxis();
+		createLabels();
+	}
+	
+	public void createLabels()
+	{
+		String yLabel1;
+			
+		// create first y label
+		if(showAttribute.attr1 == null)
+		{
+			yLabel1 = "Select\nAttribute";
+		}
+		else
+		{
+			yLabel1 = showAttribute.attr1.getAxisLabel();
+		}
+		
+		fill(255);
+		PFont font = createFont("SansSerif", 10*scaleFactor);
+		textFont(font);
+		textLeading(12*scaleFactor);		
+		text(yLabel1, xPos+(scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
+		
+		String yLabel2;
+			
+		// create second y label
+		if(showAttribute.attr2 == null)
+		{
+			yLabel2 = "Select\nAttribute";
+		}
+		else
+		{
+			yLabel2 = showAttribute.attr2.getAxisLabel();
+		}
+		textAlign(RIGHT, CENTER);
+		text(yLabel2, xPos+xLength-(2*scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
+		
+		// create x axis label
+		textAlign(CENTER, CENTER);
+		text("year",(int)(plotX1+plotX2)/2, yPos + yLength - (50*scaleFactor));
+	}	
+	
+	
+	public void createAxis()
+	{
+		strokeWeight(2);  // set the line width
+  		stroke(255);
+		
+		smooth();
+		noFill();
+		
+		plotX1 = xPos+padding;
+		plotX2 = xPos + xLength - padding;
+		
+		plotY1 = yPos+ (30*scaleFactor);
+		plotY2 = yPos + yLength - padding;
+		
+		beginShape();
+		vertex(plotX1,plotY1);
+		vertex(plotX1,plotY2 );
+		vertex(plotX2,plotY2);
+		vertex(plotX2,plotY1);
+		endShape();
+	}
+	
+	private void createXAxis()
+	{
+		fill(0);
+  		textSize(10 * scaleFactor);
+  		textAlign(CENTER);
+  
+  // Use thin, gray lines to draw the grid
+  		stroke(224);
+  		strokeWeight(1);
+  
+  		for (int row = startYear; row <= endYear; row++) 
+  		{
+    		if ( row % yearInterval == 0) 
+    		{
+      			float x = map(row, startYear, endYear, plotX1, plotX2);
+      			text(Integer.toString(row), x, plotY2 + textAscent() + 10*scaleFactor);
+      			line(x, plotY1, x, plotY2);
+    		}
+		}
+	}
+	
+}
+class GraphCentral
+{
+	int xPos,yPos;
+	PFont font;
+	
+	int selectedTab = 0;
+	String tabs[] = {"Normal","percentage","Data","Clusters"};
+	
+	int[] tabLeft = new int[4], tabRight = new int[4];
+	int tabTop,tabBottom,tabPad = 10*scaleFactor;
+	
+	Graph graph;
+	
+	GraphCentral(int xPos, int yPos , PFont font)
+	{
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.font = font;	
+		
+		tabBottom = yPos;
+		tabTop = yPos - (int)textAscent() - 10*scaleFactor;
+		
+		
+		//noFill();
+		//stroke(200);  
+		//rect(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);	
+		
+		graph = new Graph(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 		
 	}
 	
-	public void drawGraph()
+	public void refreshGraphCentral()
 	{
-		rect(x,y,100,100);
-		fill(200);
+		textFont(font);
+		textAlign(LEFT);
+		
+		int runningX = xPos;
+		
+		for( int i = 0 ; i < tabs.length ; i++ )
+		{
+			String tab = tabs[i];
+			
+			tabLeft[i] = runningX;
+			int tabWidth = (int)textWidth(tab);
+			tabRight[i] = runningX + tabWidth + 2*scaleFactor*tabPad;			
+						
+			fill( selectedTab == i ? 255 : 100 );
+			text(tab,tabLeft[i],tabBottom);
+			
+			runningX = tabRight[i];		
+		}		
+			
+		if(selectedTab == 0)
+		{
+			graph.refreshGraph();
+		}
 	}
+	
+	public void handleMouseClick(int xClick,int yClick)
+	{
+		 if (yClick > tabTop && yClick < tabBottom) 
+		 {
+    		for (int col = 0; col < tabs.length; col++)
+    		{
+      			if (xClick > tabLeft[col] && xClick < tabRight[col])
+      			{
+        			selectedTab = col;
+      			}
+    		}
+  		}
+	}
+ 
+ 	
 }
 class Keyboard
 {
@@ -199,6 +423,7 @@ class Keyboard
 	
 	
 	int buttonWidth,buttonHeight;
+	int rowTwoY;   // using the same y co-ordinate to place the year slider
 	
 	Keyboard()
 	{	
@@ -224,7 +449,7 @@ class Keyboard
      		}
      		
      		int rowTwoX = rowOneX + buttonWidth/2;
-     		int rowTwoY = rowOneY + buttonHeight + spacing*scaleFactor;
+     		rowTwoY = rowOneY + buttonHeight + spacing*scaleFactor;
      		
      		
      		for (int i = 0 ; i < key2.length ; i++)
@@ -302,20 +527,30 @@ class Label
 	}
 	
 	public void drawLabel()
-	{
+	{			
+		MyControlListener mys = new MyControlListener();		
 		
+		but = cp5.addButton(country)
+     	.setValue(100)
+     	.setPosition(xPosition,yPosition)
+     	.setSize(200*scaleFactor,30*scaleFactor)
+     	.setColor(countryColor)
+     	.addListener(mys);                 
+	}
+	
+	public void reDraw(int xPosition,int yPosition)
+	{
+		this.xPosition = xPosition;
+		this.yPosition = yPosition;
 		
 		MyControlListener mys = new MyControlListener();
 		
 		but = cp5.addButton(country)
-     .setValue(100)
-     .setPosition(xPosition,yPosition)
-     .setSize(200*scaleFactor,40*scaleFactor)
-     .setColor(countryColor)
-     .addListener(mys);
-                   
-         
-         
+     	.setValue(100)
+     	.setPosition(xPosition,yPosition)
+     	.setSize(200*scaleFactor,40*scaleFactor)
+     	.setColor(countryColor)
+     	.addListener(mys);         
 	}
 	
 	public void removeLabel()
@@ -327,27 +562,135 @@ class Label
 	{
     	public void controlEvent(ControlEvent theEvent) 
     	{
-    		
-    		showSelectedCountries.removeCountry("");
+    		println("@@@@@@");
+    		println(theEvent.getName());
+    		showSelectedCountries.removeCountry(theEvent.getName());
     	}
     }
 }
-class MapS
-{ 
-	int x,y;
+class Myslider
+{
+	Range range;
+	int xPos , yPos, sLength , sHeight;
+	int start,end;
 	
-	MapS()
+	// the y axis co-ordinates is same as the y coordinate for the second row of the keyboard
+	// the x axis co-ordinate is same as check box start point
+	// length as big as the longest checkbox
+	
+	Myslider( int xPos , int yPos , int sLength , int sHeight)
 	{
-		x = width/2;
-		y = height/2;		
+
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.sLength = sLength;
+		this.sHeight = sHeight;
+		
+		MyControlListener myListner = new MyControlListener();
+
+		range = cp5.addRange("")
+             // disable broadcasting since setRange and setRangeValues will trigger an event
+             .setBroadcast(false) 
+             .setPosition(xPos,yPos)
+             .setSize(314,40)
+             .setHandleSize(20*scaleFactor)
+             .setRange(1980,2008)
+             .setRangeValues(1980,2008)
+             // after the initialization we turn broadcast back on again
+             .setBroadcast(true)
+             .setColorForeground(0xffFFFFFF)
+             .setColorBackground(color(255,40))
+             .addListener(myListner)
+             ;
+             
+         
+	}
+	
+	
+	class MyControlListener implements ControlListener 
+	{
+    public void controlEvent(ControlEvent theEvent) 
+    {
+    	start = PApplet.parseInt(theEvent.getController().getArrayValue(0));
+    	end = PApplet.parseInt(theEvent.getController().getArrayValue(1));
+    }
+    
+  	}
+}
+
+class ShowAttribute
+{
+	int xPos,yPos;
+	
+	int noOfAttributeSelected = 0; // keeps track of number of attr selected
+	// doesnt allow more that 2 attribute to be selected
+	// check the checkbox class for more details
+	
+	
+	int sliderLength = 0;
+	
+	Checkbox[] checkbox = new Checkbox[Attribute.values().length];
+	Attribute attr1,attr2;
+	
+	ShowAttribute(int prevX,int prevY)
+	{
+		xPos = prevX + 200*scaleFactor + spacing*scaleFactor;   // length of the selected country label
+		yPos = prevY;	
+		
+		PFont fontC = createFont("SansSerif", checkboxFontSize*scaleFactor);
+		
+		for (int i = 0 ; i < checkbox.length ; i++ )
+		{
+			checkbox[i] = new Checkbox( xPos, yPos + i* (spacing*2*scaleFactor + ((int)textAscent())), fontC, Attribute.values()[i]);
+		}	
 		
 	}
 	
-	public void drawMap()
+	
+	public void refresh()
 	{
-		rect(x,y,100,100);
-		fill(100);
+		for (int i = 0 ; i < checkbox.length ; i++ )
+		{
+			checkbox[i].drawCheckbox();
+		}
 	}
+	
+	
+	public void handleMouseClick(int xClick,int yClick)
+	{
+		for (int i = 0 ; i < checkbox.length ; i++ )
+		{
+			checkbox[i].handleChecked( xClick , yClick );
+		}
+	}
+	
+	
+	public void trackSelectedAttribute(Attribute attr)
+	{
+		noOfAttributeSelected++;
+		if( attr1 != null)
+		{
+			attr1 = attr;
+		}
+		else
+		{
+			attr2 = attr;
+		}
+	}
+	
+	public void trackUnselectedAttribute(Attribute attr)
+	{
+		noOfAttributeSelected--;
+		if ( attr1 == attr)
+		{
+			attr1 = null;
+		}
+		else
+		{
+			attr2 = null;
+		}
+	}
+	
 }
 class ShowSelectedCountries
 {
@@ -363,7 +706,7 @@ class ShowSelectedCountries
 	{
 		init();
 				
-		xPosition = (int) width/5 + spacing*scaleFactor*4;
+		xPosition = (int) width/5 + spacing*scaleFactor*2;
 		yPosition = distancefromTop*scaleFactor - inputHeight * scaleFactor;
 					
 	}
@@ -377,6 +720,8 @@ class ShowSelectedCountries
 	
 	public void addCountry(String country)
 	{
+		if(!selectedCountry.containsKey(country))
+		{
 		if(availableColors.size() > 0)
 		{	
 			CColor temp = ((CColor)availableColors.get(0));	
@@ -384,7 +729,7 @@ class ShowSelectedCountries
 			
 			int i = selectedCountry.keySet().size();
 			
-			int yPos = yPosition + i * scaleFactor * (spacing + 40 );
+			int yPos = yPosition + i * scaleFactor * (spacing + 30 );
 			
 			Label label = new Label(country,temp,xPosition,yPos);
 			selectedCountry.put(country,label);
@@ -393,12 +738,12 @@ class ShowSelectedCountries
 		{
 			println("Max country limit reached");
 		}
+		}
 	}
 	
 	public void removeCountry(String country)
 	{
 		Label deleted = (Label) selectedCountry.remove(country);
-		println(deleted);
 		availableColors.add(deleted.countryColor);
 		deleted.removeLabel();
 		
@@ -408,19 +753,26 @@ class ShowSelectedCountries
 	public void redrawList()
 	{
 		int i = 0;
-		for(String country : (String)selectedCountry.keySet() )
+		try
 		{
-			Label toShift = (Label) selectedCountry.remove(country);
-			CColor cc = toShift.countryColor;
+			
+		
+		Set<String> listOfCountries = (Set<String>) selectedCountry.keySet();
+		for(String country :  listOfCountries )
+		{
+			Label toShift = (Label) selectedCountry.get(country);
 			toShift.removeLabel();
 			
-			int yPos = yPosition + i * scaleFactor * (spacing + 40 );
-			Label label = new Label(country,cc,xPosition,yPos);
-			selectedCountry.put(country,label);
-			
+			int yPos = yPosition + i * scaleFactor * (spacing + 40 );		
 			i++;
 			
+			toShift.reDraw(xPosition,yPos);			
 			
+		}
+		}
+		catch(Exception e)
+		{
+			println("exception");
 		}
 
 		
@@ -435,9 +787,10 @@ ControlP5 cp5;
 CountrySearch countrySearch;
 Keyboard keyboard;
 CountrySelect countrySelect;
-MapS mapS;
-Graph graph;
+GraphCentral graphCentral;
 ShowSelectedCountries showSelectedCountries;
+ShowAttribute showAttribute;
+Myslider myslider;
 
 Kevin kevin;
 
@@ -447,11 +800,15 @@ int textFontSize = 15;
 int scaleFactor = 1;
 int inputHeight = 30;
 int distancefromTop = 100;
+int startYear = 1980;
+int endYear = 2008;
+int yearInterval = 4;
 boolean flag = true;
+int checkboxFontSize = 15;
 
 public void setup()
 {
-	size(1360,384);
+	size(1360*scaleFactor,384*scaleFactor,JAVA2D);
 	//background(139,139,137);
 
 	cp5 = new ControlP5(this);
@@ -465,40 +822,27 @@ public void setup()
 	countrySearch = new CountrySearch();
 	keyboard      = new Keyboard(); 
 	countrySelect = new CountrySelect();
-	mapS = new MapS();
-	graph = new Graph();
 	showSelectedCountries = new ShowSelectedCountries();
+	showAttribute = new ShowAttribute(showSelectedCountries.xPosition,showSelectedCountries.yPosition);
+	myslider = new Myslider(showAttribute.xPos , keyboard.rowTwoY , 314*scaleFactor , 40*scaleFactor);
+	graphCentral = new GraphCentral(myslider.xPos + myslider.sLength + spacing*scaleFactor,showSelectedCountries.yPosition,font);
 	
 	// java classes
 	kevin = new Kevin();
 }
  
 public void draw()
-{ 
-	//countrySearch.drawText();
-	//countrySearch.showCountrySuggestions();
-	 background(20);
-	 
-	 if(flag)
-	 {
-	 
-	 mapS.drawMap();
-	 }
-	 else
-	 graph.drawGraph();
-	 
+{ 	
+	background(20);
+	showAttribute.refresh(); 
+	graphCentral.refreshGraphCentral();
 	
 }
 
 public void mousePressed()
 {
-	 if (mouseY > 0 && mouseX > width/2)
-	 {
-	 	print("second half");
-	 	flag = !flag;
-	 	
-	 	
-	 }
+	 showAttribute.handleMouseClick(mouseX,mouseY);
+	 graphCentral.handleMouseClick(mouseX,mouseY);
 } 
 
 public void controlEvent(ControlEvent theEvent) 

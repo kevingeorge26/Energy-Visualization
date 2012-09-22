@@ -1,0 +1,33 @@
+
+
+
+
+void drawAxisLabels() {
+  fill(0);
+  textSize(13);
+  textLeading(15);
+  
+  textAlign(CENTER, CENTER);
+  text("Gallons\nconsumed\nper capita", labelX, (plotY1+plotY2)/2);
+  textAlign(CENTER);
+  text("Year", (plotX1+plotX2)/2, labelY);
+}
+
+
+void drawYearLabels() {
+  fill(0);
+  textSize(10);
+  textAlign(CENTER);
+  
+  // Use thin, gray lines to draw the grid
+  stroke(224);
+  strokeWeight(1);
+  
+  for (int row = 0; row < rowCount; row++) {
+    if (years[row] % yearInterval == 0) {
+      float x = map(years[row], yearMin, yearMax, plotX1, plotX2);
+      text(years[row], x, plotY2 + textAscent() + 10);
+      line(x, plotY1, x, plotY2);
+    }
+  }
+}

@@ -5,9 +5,10 @@ ControlP5 cp5;
 CountrySearch countrySearch;
 Keyboard keyboard;
 CountrySelect countrySelect;
-MapS mapS;
-Graph graph;
+GraphCentral graphCentral;
 ShowSelectedCountries showSelectedCountries;
+ShowAttribute showAttribute;
+Myslider myslider;
 
 Kevin kevin;
 
@@ -17,11 +18,15 @@ int textFontSize = 15;
 int scaleFactor = 1;
 int inputHeight = 30;
 int distancefromTop = 100;
+int startYear = 1980;
+int endYear = 2008;
+int yearInterval = 4;
 boolean flag = true;
+int checkboxFontSize = 15;
 
 void setup()
 {
-	size(1360,384);
+	size(1360*scaleFactor,384*scaleFactor,JAVA2D);
 	//background(139,139,137);
 
 	cp5 = new ControlP5(this);
@@ -35,40 +40,27 @@ void setup()
 	countrySearch = new CountrySearch();
 	keyboard      = new Keyboard(); 
 	countrySelect = new CountrySelect();
-	mapS = new MapS();
-	graph = new Graph();
 	showSelectedCountries = new ShowSelectedCountries();
+	showAttribute = new ShowAttribute(showSelectedCountries.xPosition,showSelectedCountries.yPosition);
+	myslider = new Myslider(showAttribute.xPos , keyboard.rowTwoY , 314*scaleFactor , 40*scaleFactor);
+	graphCentral = new GraphCentral(myslider.xPos + myslider.sLength + spacing*scaleFactor,showSelectedCountries.yPosition,font);
 	
 	// java classes
 	kevin = new Kevin();
 }
  
 void draw()
-{ 
-	//countrySearch.drawText();
-	//countrySearch.showCountrySuggestions();
-	 background(20);
-	 
-	 if(flag)
-	 {
-	 
-	 mapS.drawMap();
-	 }
-	 else
-	 graph.drawGraph();
-	 
+{ 	
+	background(20);
+	showAttribute.refresh(); 
+	graphCentral.refreshGraphCentral();
 	
 }
 
 void mousePressed()
 {
-	 if (mouseY > 0 && mouseX > width/2)
-	 {
-	 	print("second half");
-	 	flag = !flag;
-	 	
-	 	
-	 }
+	 showAttribute.handleMouseClick(mouseX,mouseY);
+	 graphCentral.handleMouseClick(mouseX,mouseY);
 } 
 
 void controlEvent(ControlEvent theEvent) 

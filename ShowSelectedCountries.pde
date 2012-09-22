@@ -12,7 +12,7 @@ class ShowSelectedCountries
 	{
 		init();
 				
-		xPosition = (int) width/5 + spacing*scaleFactor*4;
+		xPosition = (int) width/5 + spacing*scaleFactor*2;
 		yPosition = distancefromTop*scaleFactor - inputHeight * scaleFactor;
 					
 	}
@@ -26,6 +26,8 @@ class ShowSelectedCountries
 	
 	void addCountry(String country)
 	{
+		if(!selectedCountry.containsKey(country))
+		{
 		if(availableColors.size() > 0)
 		{	
 			CColor temp = ((CColor)availableColors.get(0));	
@@ -33,7 +35,7 @@ class ShowSelectedCountries
 			
 			int i = selectedCountry.keySet().size();
 			
-			int yPos = yPosition + i * scaleFactor * (spacing + 40 );
+			int yPos = yPosition + i * scaleFactor * (spacing + 30 );
 			
 			Label label = new Label(country,temp,xPosition,yPos);
 			selectedCountry.put(country,label);
@@ -42,12 +44,12 @@ class ShowSelectedCountries
 		{
 			println("Max country limit reached");
 		}
+		}
 	}
 	
 	void removeCountry(String country)
 	{
 		Label deleted = (Label) selectedCountry.remove(country);
-		println(deleted);
 		availableColors.add(deleted.countryColor);
 		deleted.removeLabel();
 		
@@ -57,19 +59,26 @@ class ShowSelectedCountries
 	void redrawList()
 	{
 		int i = 0;
-		for(String country : (String)selectedCountry.keySet() )
+		try
 		{
-			Label toShift = (Label) selectedCountry.remove(country);
-			CColor cc = toShift.countryColor;
+			
+		
+		Set<String> listOfCountries = (Set<String>) selectedCountry.keySet();
+		for(String country :  listOfCountries )
+		{
+			Label toShift = (Label) selectedCountry.get(country);
 			toShift.removeLabel();
 			
-			int yPos = yPosition + i * scaleFactor * (spacing + 40 );
-			Label label = new Label(country,cc,xPosition,yPos);
-			selectedCountry.put(country,label);
-			
+			int yPos = yPosition + i * scaleFactor * (spacing + 40 );		
 			i++;
 			
+			toShift.reDraw(xPosition,yPos);			
 			
+		}
+		}
+		catch(Exception e)
+		{
+			println("exception");
 		}
 
 		

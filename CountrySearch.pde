@@ -60,32 +60,4 @@ class CountrySearch
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/*
-	void addToText(char ch)
-	{
-		currentTyped = currentTyped + ch;
-		
-	}
-	
-	void drawText()
-	{
-		textSize(textFontSize);
-		text(currentTyped,x+spacing,y+spacing,cWidth-spacing,30);
-		fill(0, 102, 153);
-	}*/
-	
-	
 }

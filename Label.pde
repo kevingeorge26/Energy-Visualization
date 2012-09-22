@@ -19,20 +19,30 @@ class Label
 	}
 	
 	void drawLabel()
-	{
+	{			
+		MyControlListener mys = new MyControlListener();		
 		
+		but = cp5.addButton(country)
+     	.setValue(100)
+     	.setPosition(xPosition,yPosition)
+     	.setSize(200*scaleFactor,30*scaleFactor)
+     	.setColor(countryColor)
+     	.addListener(mys);                 
+	}
+	
+	void reDraw(int xPosition,int yPosition)
+	{
+		this.xPosition = xPosition;
+		this.yPosition = yPosition;
 		
 		MyControlListener mys = new MyControlListener();
 		
 		but = cp5.addButton(country)
-     .setValue(100)
-     .setPosition(xPosition,yPosition)
-     .setSize(200*scaleFactor,40*scaleFactor)
-     .setColor(countryColor)
-     .addListener(mys);
-                   
-         
-         
+     	.setValue(100)
+     	.setPosition(xPosition,yPosition)
+     	.setSize(200*scaleFactor,40*scaleFactor)
+     	.setColor(countryColor)
+     	.addListener(mys);         
 	}
 	
 	void removeLabel()
@@ -44,8 +54,9 @@ class Label
 	{
     	public void controlEvent(ControlEvent theEvent) 
     	{
-    		
-    		showSelectedCountries.removeCountry("");
+    		println("@@@@@@");
+    		println(theEvent.getName());
+    		showSelectedCountries.removeCountry(theEvent.getName());
     	}
     }
 }
