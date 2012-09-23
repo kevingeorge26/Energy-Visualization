@@ -241,6 +241,7 @@ class Graph
 	int plotX1,plotX2,plotY1,plotY2;
 	int scaleColor;
 	int padding = 100 * scaleFactor;
+	float maxValue;
 	
 	Graph(int xPos,int yPos, int xLength , int yLength)
 	{
@@ -252,9 +253,96 @@ class Graph
 	
 	public void refreshGraph()
 	{
+		
 		createAxis();
 		createLabels();
+		drawYearLabels();
+		createDataLines();
+		
+		drawVolumeLabels();
 	}
+	
+	int yearInterval = 3;
+	public void drawYearLabels()
+	 {
+  		fill(255);
+  		textSize(10*scaleFactor);
+  		textAlign(CENTER);
+  
+  		// Use thin, gray lines to draw the grid
+  		
+  		for (int row = myslider.start; row < myslider.end; row++)
+  	 	{
+    		if (row % yearInterval == 0) 
+    		{
+      			float x = map(row, myslider.start, myslider.end, plotX1, plotX2);
+      			text(row, x, plotY2 + textAscent() + 10*scaleFactor);
+      	
+    		}	
+  		}
+  		
+  		textAlign(LEFT);
+	}
+	
+	
+	int volumeIntervalMinor = 5;   // Add this above setup()
+	int volumeInterval = 10;
+
+public void drawVolumeLabels()
+{
+  fill(255);
+  textSize(10);
+  textAlign(RIGHT);
+  
+  stroke(128);
+  strokeWeight(1*scaleFactor);
+  float dataMin = 0;
+  float dataMax = maxValue;
+
+  for (float v = dataMin; v <= dataMax; v += volumeIntervalMinor) {
+    if (v % volumeIntervalMinor == 0) {     // If a tick mark
+      float y = map(v, dataMin, dataMax, plotY2, plotY1);  
+      if (v % volumeInterval == 0) {        // If a major tick mark
+        float textOffset = textAscent()/2;  // Center vertically
+        if (v == dataMin) {
+          textOffset = 0;                   // Align by the bottom
+        } else if (v == dataMax) {
+          textOffset = textAscent();        // Align by the top
+        }
+        text(floor(v), plotX1 - 10, y + textOffset);
+        line(plotX1 - 4*scaleFactor, y, plotX1, y);     // Draw major tick
+      } else {
+        //line(plotX1 - 2, y, plotX1, y);     // Draw minor tick
+      }
+    }
+  }
+  
+  
+  textAlign(LEFT);
+  
+  
+  for (float v = dataMin; v <= dataMax; v += volumeIntervalMinor) {
+    if (v % volumeIntervalMinor == 0) {     // If a tick mark
+      float y = map(v, dataMin, dataMax, plotY2, plotY1);  
+      if (v % volumeInterval == 0) {        // If a major tick mark
+        float textOffset = textAscent()/2;  // Center vertically
+        if (v == dataMin) {
+          textOffset = 0;                   // Align by the bottom
+        } else if (v == dataMax) {
+          textOffset = textAscent();        // Align by the top
+        }
+        text(floor(v), plotX2 + 10, y + textOffset);
+        line(plotX2, y, plotX2+4*scaleFactor, y);     // Draw major tick
+      } else {
+        //line(plotX1 - 2, y, plotX1, y);     // Draw minor tick
+      }
+    }
+  }
+  
+  
+}
+	
+	
 	
 	public void createLabels()
 	{
@@ -276,6 +364,8 @@ class Graph
 		textLeading(12*scaleFactor);		
 		text(yLabel1, xPos+(scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
 		
+		line(xPos+(scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),xPos+(scaleFactor*spacing)+textWidth("Total Energy"), (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()));
+		
 		String yLabel2;
 			
 		// create second y label
@@ -290,15 +380,20 @@ class Graph
 		textAlign(RIGHT, CENTER);
 		text(yLabel2, xPos+xLength-(2*scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
 		
+		line( xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy"),(int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),xPos+xLength-(2*scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()));
+		ellipseMode(RADIUS);
+		ellipse(xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy")/2,(int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),2*scaleFactor,2*scaleFactor);
+				
 		// create x axis label
 		textAlign(CENTER, CENTER);
 		text("year",(int)(plotX1+plotX2)/2, yPos + yLength - (50*scaleFactor));
+		textAlign(LEFT, CENTER);
 	}	
 	
 	
 	public void createAxis()
 	{
-		strokeWeight(2);  // set the line width
+		strokeWeight(scaleFactor);  // set the line width
   		stroke(255);
 		
 		smooth();
@@ -318,26 +413,70 @@ class Graph
 		endShape();
 	}
 	
-	private void createXAxis()
+	public void createDataLines()
 	{
-		fill(0);
-  		textSize(10 * scaleFactor);
-  		textAlign(CENTER);
-  
-  // Use thin, gray lines to draw the grid
-  		stroke(224);
-  		strokeWeight(1);
-  
-  		for (int row = startYear; row <= endYear; row++) 
-  		{
-    		if ( row % yearInterval == 0) 
-    		{
-      			float x = map(row, startYear, endYear, plotX1, plotX2);
-      			text(Integer.toString(row), x, plotY2 + textAscent() + 10*scaleFactor);
-      			line(x, plotY1, x, plotY2);
-    		}
+		Set<String> selectCountries = showSelectedCountries.getSelectedCountries();
+		maxValue = atlas.getBiggestValue(selectCountries,myslider.start,myslider.end ,showAttribute.attr1 , showAttribute.attr2);
+		
+		for(String country :  selectCountries )
+		{
+			Label labelTemp = (Label)showSelectedCountries.selectedCountry.get(country);
+			CColor tempColor = (CColor)labelTemp.countryColor;
+			
+			if(showAttribute.attr1 != null)
+			{
+				float[] val = atlas.getAttrValue(country,myslider.start,myslider.end,showAttribute.attr1);
+				plotLines(val,tempColor.getBackground(),false,maxValue);
+			}
+			
+			if( showAttribute.attr2 != null)
+			{
+				float[] val = atlas.getAttrValue(country,myslider.start,myslider.end,showAttribute.attr2);
+				plotDashedLines(val,tempColor.getBackground(),false,maxValue);
+			}
 		}
+		
 	}
+	
+	public void plotLines(float[] val, int lineColor, boolean isDashed,float maxValue)
+	{
+		beginShape();
+		noFill();
+		
+		stroke(lineColor);
+		
+		for(int i = 0 ; i < val.length ; i++ )
+		{
+			float x = map(myslider.start + i , myslider.start,myslider.end,plotX1,plotX2);
+			float y = map(val[i],0,maxValue,plotY2,plotY1);
+			
+			
+			vertex(x,y);
+		}
+		
+		endShape();
+	}
+	
+	public void plotDashedLines(float[] val, int lineColor, boolean isDashed,float maxValue)
+	{
+		beginShape();
+		noFill();
+		
+		stroke(lineColor);
+		
+		for(int i = 0 ; i < val.length ; i++ )
+		{
+			float x = map(myslider.start + i , myslider.start,myslider.end,plotX1,plotX2);
+			float y = map(val[i],0,maxValue,plotY2,plotY1);
+			ellipseMode(RADIUS);
+			ellipse(x,y,2*scaleFactor,2*scaleFactor);
+			vertex(x,y);
+		}
+		
+		endShape();
+	}
+	
+	
 	
 }
 class GraphCentral
@@ -345,13 +484,15 @@ class GraphCentral
 	int xPos,yPos;
 	PFont font;
 	
-	int selectedTab = 0;
-	String tabs[] = {"Normal","percentage","Data","Clusters"};
+	int selectedTab = 1;
+	String tabs[] = {"Normal","percentage","Data","Clusters","Map"};
 	
-	int[] tabLeft = new int[4], tabRight = new int[4];
+	int[] tabLeft = new int[5], tabRight = new int[5];
 	int tabTop,tabBottom,tabPad = 10*scaleFactor;
 	
 	Graph graph;
+	Map mymap;
+	PieChart piechart;
 	
 	GraphCentral(int xPos, int yPos , PFont font)
 	{
@@ -368,7 +509,8 @@ class GraphCentral
 		//rect(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);	
 		
 		graph = new Graph(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
-		
+		mymap = new Map(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
+		piechart = new PieChart(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 	}
 	
 	public void refreshGraphCentral()
@@ -395,6 +537,14 @@ class GraphCentral
 		if(selectedTab == 0)
 		{
 			graph.refreshGraph();
+		}
+		if(selectedTab == 1)
+		{
+			piechart.refreshChart();
+		}
+		if(selectedTab == 4)
+		{
+			mymap.placeMap();
 		}
 	}
 	
@@ -568,11 +718,39 @@ class Label
     	}
     }
 }
+class Map
+{
+	int xPos,yPos,xLength,yLength;
+	PShape bot;
+	
+	Map(int xPos,int yPos, int xLength , int yLength)
+	{
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.xLength = xLength;
+		this.yLength = yLength;
+		
+		bot = loadShape("A_large_blank_world_map_with_oceans_marked_in_blue.svg");
+		
+	}
+	
+	public void placeMap()
+	{
+		fill(255);
+		rect(xPos,yPos, xLength, yLength);
+		shape(bot, xPos,yPos, xLength, yLength);  
+	}
+	
+	public void handleMouseClick()
+	{
+		
+	}
+}
 class Myslider
 {
 	Range range;
 	int xPos , yPos, sLength , sHeight;
-	int start,end;
+	int start = 1980,end=2008;
 	
 	// the y axis co-ordinates is same as the y coordinate for the second row of the keyboard
 	// the x axis co-ordinate is same as check box start point
@@ -618,6 +796,85 @@ class Myslider
   	}
 }
 
+class PieChart
+{
+	
+	int xPos,yPos,xLength,yLength;
+		
+	PieChart(int xPos,int yPos, int xLength , int yLength)
+	{
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.xLength = xLength;
+		this.yLength = yLength;
+	}
+	
+	public void refreshChart()
+	{
+		
+			createCircle1();	
+			createCircle2();
+		
+	}
+	
+	public void createCircle1()
+	{
+		String heading;
+		
+		if(showAttribute.attr1 == null)
+		{
+			heading = "Select Attribute";
+		}
+		else
+		{
+			heading = showAttribute.attr1.getAxisLabel();
+			Set<String> selectCountries = showSelectedCountries.getSelectedCountries();
+			int[] percent = atlas.getPercentage(selectCountries,myslider.start,myslider.end,showAttribute.attr1);
+			
+			
+			
+			
+		}
+		
+		PFont font = createFont("SansSerif", 10*scaleFactor);
+		textFont(font);
+		textAlign(CENTER);
+		fill(255);
+		
+		text(heading,xPos + xLength/4, yPos + (scaleFactor * spacing * 5) );
+		
+		
+		
+		
+		
+		
+	}
+	
+	public void createCircle2()
+	{
+		String heading;
+		
+		if(showAttribute.attr2 == null)
+		{
+			heading = "Select Attribute";
+		}
+		else
+		{
+			heading = showAttribute.attr2.getAxisLabel();
+		}
+		
+		PFont font = createFont("SansSerif", 10*scaleFactor);
+		textFont(font);
+		textAlign(CENTER);
+		fill(255);
+		
+		text( heading,xPos + 3* (xLength/4) , yPos + (scaleFactor * spacing * 5) );
+		
+		
+		
+		textAlign(LEFT);
+	}
+}
 class ShowAttribute
 {
 	int xPos,yPos;
@@ -668,7 +925,8 @@ class ShowAttribute
 	public void trackSelectedAttribute(Attribute attr)
 	{
 		noOfAttributeSelected++;
-		if( attr1 != null)
+		
+		if( attr1 == null)
 		{
 			attr1 = attr;
 		}
@@ -772,12 +1030,16 @@ class ShowSelectedCountries
 		}
 		catch(Exception e)
 		{
-			println("exception");
-		}
-
-		
-		
+			println("ShowSelectedCountris :: exception");
+		}		
 	}
+	
+	public Set<String> getSelectedCountries()
+	{
+		return  (Set<String>) selectedCountry.keySet();
+	}
+	
+	
 		
 }
 
@@ -792,7 +1054,7 @@ ShowSelectedCountries showSelectedCountries;
 ShowAttribute showAttribute;
 Myslider myslider;
 
-Kevin kevin;
+Atlas atlas;
 
 
 int spacing = 5;
@@ -806,13 +1068,15 @@ int yearInterval = 4;
 boolean flag = true;
 int checkboxFontSize = 15;
 
+boolean firstTime = true;
+
 public void setup()
 {
 	size(1360*scaleFactor,384*scaleFactor,JAVA2D);
 	//background(139,139,137);
 
 	cp5 = new ControlP5(this);
-	CColor cc = new CColor(0xffcdc9c9, 0xffcdc9c9, 0xfff0ffff,  0xff2E0854, 0xffff0000) ;
+	CColor cc = new CColor(0xffcdc9c9, 0xffffffff, 0xfff0ffff,  0xff2E0854, 0xffff0000) ;
 	cp5.setColor(cc);
 	
 	PFont font = createFont("SansSerif", textFontSize*scaleFactor);
@@ -828,12 +1092,27 @@ public void setup()
 	graphCentral = new GraphCentral(myslider.xPos + myslider.sLength + spacing*scaleFactor,showSelectedCountries.yPosition,font);
 	
 	// java classes
-	kevin = new Kevin();
+	atlas = new Atlas();
 }
  
 public void draw()
 { 	
 	background(20);
+	
+	if(firstTime)
+	{
+		try
+		{
+			Thread.sleep(2000);
+			firstTime = false;
+		}
+		catch(Exception e)
+		{
+			println("exception in draw of project1.pde" + e.getMessage());
+		}
+	}
+	
+	
 	showAttribute.refresh(); 
 	graphCentral.refreshGraphCentral();
 	

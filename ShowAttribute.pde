@@ -48,7 +48,8 @@ class ShowAttribute
 	void trackSelectedAttribute(Attribute attr)
 	{
 		noOfAttributeSelected++;
-		if( attr1 != null)
+		
+		if( attr1 == null)
 		{
 			attr1 = attr;
 		}

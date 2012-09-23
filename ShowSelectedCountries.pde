@@ -78,11 +78,15 @@ class ShowSelectedCountries
 		}
 		catch(Exception e)
 		{
-			println("exception");
-		}
-
-		
-		
+			println("ShowSelectedCountris :: exception");
+		}		
 	}
+	
+	Set<String> getSelectedCountries()
+	{
+		return  (Set<String>) selectedCountry.keySet();
+	}
+	
+	
 		
 }

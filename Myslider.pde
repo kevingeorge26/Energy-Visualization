@@ -2,7 +2,7 @@ class Myslider
 {
 	Range range;
 	int xPos , yPos, sLength , sHeight;
-	int start,end;
+	int start = 1980,end=2008;
 	
 	// the y axis co-ordinates is same as the y coordinate for the second row of the keyboard
 	// the x axis co-ordinate is same as check box start point

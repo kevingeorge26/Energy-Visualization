@@ -10,7 +10,7 @@ ShowSelectedCountries showSelectedCountries;
 ShowAttribute showAttribute;
 Myslider myslider;
 
-Kevin kevin;
+Atlas atlas;
 
 
 int spacing = 5;
@@ -24,13 +24,15 @@ int yearInterval = 4;
 boolean flag = true;
 int checkboxFontSize = 15;
 
+boolean firstTime = true;
+
 void setup()
 {
 	size(1360*scaleFactor,384*scaleFactor,JAVA2D);
 	//background(139,139,137);
 
 	cp5 = new ControlP5(this);
-	CColor cc = new CColor(0xffcdc9c9, 0xffcdc9c9, 0xfff0ffff,  0xff2E0854, 0xffff0000) ;
+	CColor cc = new CColor(0xffcdc9c9, 0xffffffff, 0xfff0ffff,  0xff2E0854, 0xffff0000) ;
 	cp5.setColor(cc);
 	
 	PFont font = createFont("SansSerif", textFontSize*scaleFactor);
@@ -46,12 +48,27 @@ void setup()
 	graphCentral = new GraphCentral(myslider.xPos + myslider.sLength + spacing*scaleFactor,showSelectedCountries.yPosition,font);
 	
 	// java classes
-	kevin = new Kevin();
+	atlas = new Atlas();
 }
  
 void draw()
 { 	
 	background(20);
+	
+	if(firstTime)
+	{
+		try
+		{
+			Thread.sleep(2000);
+			firstTime = false;
+		}
+		catch(Exception e)
+		{
+			println("exception in draw of project1.pde" + e.getMessage());
+		}
+	}
+	
+	
 	showAttribute.refresh(); 
 	graphCentral.refreshGraphCentral();
 	

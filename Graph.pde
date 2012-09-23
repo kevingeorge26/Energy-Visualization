@@ -6,6 +6,7 @@ class Graph
 	int plotX1,plotX2,plotY1,plotY2;
 	int scaleColor;
 	int padding = 100 * scaleFactor;
+	float maxValue;
 	
 	Graph(int xPos,int yPos, int xLength , int yLength)
 	{
@@ -17,9 +18,96 @@ class Graph
 	
 	void refreshGraph()
 	{
+		
 		createAxis();
 		createLabels();
+		drawYearLabels();
+		createDataLines();
+		
+		drawVolumeLabels();
 	}
+	
+	int yearInterval = 3;
+	void drawYearLabels()
+	 {
+  		fill(255);
+  		textSize(10*scaleFactor);
+  		textAlign(CENTER);
+  
+  		// Use thin, gray lines to draw the grid
+  		
+  		for (int row = myslider.start; row < myslider.end; row++)
+  	 	{
+    		if (row % yearInterval == 0) 
+    		{
+      			float x = map(row, myslider.start, myslider.end, plotX1, plotX2);
+      			text(row, x, plotY2 + textAscent() + 10*scaleFactor);
+      	
+    		}	
+  		}
+  		
+  		textAlign(LEFT);
+	}
+	
+	
+	int volumeIntervalMinor = 5;   // Add this above setup()
+	int volumeInterval = 10;
+
+void drawVolumeLabels()
+{
+  fill(255);
+  textSize(10);
+  textAlign(RIGHT);
+  
+  stroke(128);
+  strokeWeight(1*scaleFactor);
+  float dataMin = 0;
+  float dataMax = maxValue;
+
+  for (float v = dataMin; v <= dataMax; v += volumeIntervalMinor) {
+    if (v % volumeIntervalMinor == 0) {     // If a tick mark
+      float y = map(v, dataMin, dataMax, plotY2, plotY1);  
+      if (v % volumeInterval == 0) {        // If a major tick mark
+        float textOffset = textAscent()/2;  // Center vertically
+        if (v == dataMin) {
+          textOffset = 0;                   // Align by the bottom
+        } else if (v == dataMax) {
+          textOffset = textAscent();        // Align by the top
+        }
+        text(floor(v), plotX1 - 10, y + textOffset);
+        line(plotX1 - 4*scaleFactor, y, plotX1, y);     // Draw major tick
+      } else {
+        //line(plotX1 - 2, y, plotX1, y);     // Draw minor tick
+      }
+    }
+  }
+  
+  
+  textAlign(LEFT);
+  
+  
+  for (float v = dataMin; v <= dataMax; v += volumeIntervalMinor) {
+    if (v % volumeIntervalMinor == 0) {     // If a tick mark
+      float y = map(v, dataMin, dataMax, plotY2, plotY1);  
+      if (v % volumeInterval == 0) {        // If a major tick mark
+        float textOffset = textAscent()/2;  // Center vertically
+        if (v == dataMin) {
+          textOffset = 0;                   // Align by the bottom
+        } else if (v == dataMax) {
+          textOffset = textAscent();        // Align by the top
+        }
+        text(floor(v), plotX2 + 10, y + textOffset);
+        line(plotX2, y, plotX2+4*scaleFactor, y);     // Draw major tick
+      } else {
+        //line(plotX1 - 2, y, plotX1, y);     // Draw minor tick
+      }
+    }
+  }
+  
+  
+}
+	
+	
 	
 	void createLabels()
 	{
@@ -41,6 +129,8 @@ class Graph
 		textLeading(12*scaleFactor);		
 		text(yLabel1, xPos+(scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
 		
+		line(xPos+(scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),xPos+(scaleFactor*spacing)+textWidth("Total Energy"), (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()));
+		
 		String yLabel2;
 			
 		// create second y label
@@ -55,15 +145,20 @@ class Graph
 		textAlign(RIGHT, CENTER);
 		text(yLabel2, xPos+xLength-(2*scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
 		
+		line( xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy"),(int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),xPos+xLength-(2*scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()));
+		ellipseMode(RADIUS);
+		ellipse(xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy")/2,(int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),2*scaleFactor,2*scaleFactor);
+				
 		// create x axis label
 		textAlign(CENTER, CENTER);
 		text("year",(int)(plotX1+plotX2)/2, yPos + yLength - (50*scaleFactor));
+		textAlign(LEFT, CENTER);
 	}	
 	
 	
 	void createAxis()
 	{
-		strokeWeight(2);  // set the line width
+		strokeWeight(scaleFactor);  // set the line width
   		stroke(255);
 		
 		smooth();
@@ -83,25 +178,69 @@ class Graph
 		endShape();
 	}
 	
-	private void createXAxis()
+	void createDataLines()
 	{
-		fill(0);
-  		textSize(10 * scaleFactor);
-  		textAlign(CENTER);
-  
-  // Use thin, gray lines to draw the grid
-  		stroke(224);
-  		strokeWeight(1);
-  
-  		for (int row = startYear; row <= endYear; row++) 
-  		{
-    		if ( row % yearInterval == 0) 
-    		{
-      			float x = map(row, startYear, endYear, plotX1, plotX2);
-      			text(Integer.toString(row), x, plotY2 + textAscent() + 10*scaleFactor);
-      			line(x, plotY1, x, plotY2);
-    		}
+		Set<String> selectCountries = showSelectedCountries.getSelectedCountries();
+		maxValue = atlas.getBiggestValue(selectCountries,myslider.start,myslider.end ,showAttribute.attr1 , showAttribute.attr2);
+		
+		for(String country :  selectCountries )
+		{
+			Label labelTemp = (Label)showSelectedCountries.selectedCountry.get(country);
+			CColor tempColor = (CColor)labelTemp.countryColor;
+			
+			if(showAttribute.attr1 != null)
+			{
+				float[] val = atlas.getAttrValue(country,myslider.start,myslider.end,showAttribute.attr1);
+				plotLines(val,tempColor.getBackground(),false,maxValue);
+			}
+			
+			if( showAttribute.attr2 != null)
+			{
+				float[] val = atlas.getAttrValue(country,myslider.start,myslider.end,showAttribute.attr2);
+				plotDashedLines(val,tempColor.getBackground(),false,maxValue);
+			}
 		}
+		
 	}
+	
+	void plotLines(float[] val, int lineColor, boolean isDashed,float maxValue)
+	{
+		beginShape();
+		noFill();
+		
+		stroke(lineColor);
+		
+		for(int i = 0 ; i < val.length ; i++ )
+		{
+			float x = map(myslider.start + i , myslider.start,myslider.end,plotX1,plotX2);
+			float y = map(val[i],0,maxValue,plotY2,plotY1);
+			
+			
+			vertex(x,y);
+		}
+		
+		endShape();
+	}
+	
+	void plotDashedLines(float[] val, int lineColor, boolean isDashed,float maxValue)
+	{
+		beginShape();
+		noFill();
+		
+		stroke(lineColor);
+		
+		for(int i = 0 ; i < val.length ; i++ )
+		{
+			float x = map(myslider.start + i , myslider.start,myslider.end,plotX1,plotX2);
+			float y = map(val[i],0,maxValue,plotY2,plotY1);
+			ellipseMode(RADIUS);
+			ellipse(x,y,2*scaleFactor,2*scaleFactor);
+			vertex(x,y);
+		}
+		
+		endShape();
+	}
+	
+	
 	
 }

@@ -3,13 +3,15 @@ class GraphCentral
 	int xPos,yPos;
 	PFont font;
 	
-	int selectedTab = 0;
-	String tabs[] = {"Normal","percentage","Data","Clusters"};
+	int selectedTab = 1;
+	String tabs[] = {"Normal","percentage","Data","Clusters","Map"};
 	
-	int[] tabLeft = new int[4], tabRight = new int[4];
+	int[] tabLeft = new int[5], tabRight = new int[5];
 	int tabTop,tabBottom,tabPad = 10*scaleFactor;
 	
 	Graph graph;
+	Map mymap;
+	PieChart piechart;
 	
 	GraphCentral(int xPos, int yPos , PFont font)
 	{
@@ -26,7 +28,8 @@ class GraphCentral
 		//rect(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);	
 		
 		graph = new Graph(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
-		
+		mymap = new Map(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
+		piechart = new PieChart(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 	}
 	
 	void refreshGraphCentral()
@@ -53,6 +56,14 @@ class GraphCentral
 		if(selectedTab == 0)
 		{
 			graph.refreshGraph();
+		}
+		if(selectedTab == 1)
+		{
+			piechart.refreshChart();
+		}
+		if(selectedTab == 4)
+		{
+			mymap.placeMap();
 		}
 	}
 	
