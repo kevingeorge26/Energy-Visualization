@@ -107,6 +107,28 @@ class Checkbox
 		}
 	}
 }
+class Cluster
+{
+	int xPos,yPos,xLength,yLength;
+	
+	Cluster(int xPos,int yPos, int xLength , int yLength)
+	{
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.xLength = xLength;
+		this.yLength = yLength;
+	}
+	
+	public void refreshGraph()
+	{
+		
+		createAxis();
+		createLabels();
+		drawYearLabels();
+		createDataLines();		
+		drawVolumeLabels();
+	}
+}
 class CountryPDE
 {
 	String country;
@@ -233,6 +255,107 @@ class CountrySelect
     	}
     }
 }
+class DataTable
+{
+	int xPos,yPos,xLength,yLength;
+	String label1,label2;
+	
+	Attribute attr1;
+	
+	DataTable(int xPos,int yPos, int xLength , int yLength)
+	{
+		this.xPos = xPos + spacing*scaleFactor*2;
+		this.yPos = yPos + spacing*scaleFactor*2;
+		this.xLength = xLength - spacing*scaleFactor*2;
+		this.yLength = yLength - spacing*scaleFactor*2;
+	}
+	
+	public void refreshTable()
+	{
+		if(showAttribute.attr1 == null && showAttribute.attr2 == null)
+		{
+			label1 = "Select Attribute";
+		} 
+		
+		else
+		{
+			if(showAttribute.attr1 == null)
+			{
+				label1 = showAttribute.attr2.getLabel() + showAttribute.attr2.getUnit();
+				attr1 = showAttribute.attr2;
+			}			
+			else
+			{
+				label1 = showAttribute.attr2.getLabel() + showAttribute.attr1.getUnit();
+				attr1 = showAttribute.attr1;
+			}
+			
+			
+			Set<String> selectCountries = showSelectedCountries.getSelectedCountries();
+			
+			if( selectCountries.size() > 0)
+				drawTable(selectCountries.toArray(new String[selectCountries.size()])[0]);
+			
+		}		
+		
+		
+		
+	}
+	
+	
+	public void drawTable(String country)
+	{
+		
+			
+		int rowSize = yLength/20;
+		int row;
+		
+		int start = myslider.start;
+		int end = myslider.end;
+		
+		
+		float[] toPrint = atlas.getAttrValue(country,start,end ,attr1);
+		
+		row = end-start > 20 ? 20 : end-start;
+	
+		PFont font = createFont("SansSerif", 8*scaleFactor);
+		textFont(font);
+		textAlign(CENTER);
+		
+		Label labelTemp = (Label)showSelectedCountries.selectedCountry.get(country);
+		CColor tempColor = (CColor)labelTemp.countryColor;
+			
+			
+		int ccolor = tempColor.getBackground();
+		stroke(ccolor);
+  		
+		for(int i = 0 ; i < row ; i ++)
+		{
+			noFill();
+			stroke( i%2 == 0 ? 0 : 100 );
+			rect(xPos , yPos + (rowSize *i), xLength , rowSize );
+			
+			if( i == 0 )
+			{
+				stroke(0);
+				text(label1 , xPos + xLength/2 , yPos + (rowSize *i) + textAscent() );
+			
+			}
+			else
+			{
+				fill(ccolor);
+				text(toPrint[i] , xPos + xLength/2 , yPos + (rowSize *i) + textAscent() );
+				fill(255);
+				text(start + (i-1), xPos + xLength/4 , yPos + (rowSize *i) + textAscent() );
+			}
+			
+		}
+		
+		
+		textAlign(LEFT);
+		
+	}
+}
 class Graph
 {
 	int xPos,yPos,xLength,yLength;
@@ -257,8 +380,7 @@ class Graph
 		createAxis();
 		createLabels();
 		drawYearLabels();
-		createDataLines();
-		
+		createDataLines();		
 		drawVolumeLabels();
 	}
 	
@@ -285,8 +407,8 @@ class Graph
 	}
 	
 	
-	int volumeIntervalMinor = 5;   // Add this above setup()
-	int volumeInterval = 10;
+	int volumeIntervalMinor = 50;   // Add this above setup()
+	int volumeInterval = 100;
 
 public void drawVolumeLabels()
 {
@@ -347,6 +469,7 @@ public void drawVolumeLabels()
 	public void createLabels()
 	{
 		String yLabel1;
+		strokeWeight(scaleFactor);
 			
 		// create first y label
 		if(showAttribute.attr1 == null)
@@ -355,7 +478,7 @@ public void drawVolumeLabels()
 		}
 		else
 		{
-			yLabel1 = showAttribute.attr1.getAxisLabel();
+			yLabel1 = showAttribute.attr1.getAxisLabel() + "\n" + showAttribute.attr1.getUnit();
 		}
 		
 		fill(255);
@@ -364,7 +487,7 @@ public void drawVolumeLabels()
 		textLeading(12*scaleFactor);		
 		text(yLabel1, xPos+(scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
 		
-		line(xPos+(scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),xPos+(scaleFactor*spacing)+textWidth("Total Energy"), (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()));
+		line(xPos+(scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()),xPos+(scaleFactor*spacing)+textWidth("Total Energy"), (int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()));
 		
 		String yLabel2;
 			
@@ -375,14 +498,14 @@ public void drawVolumeLabels()
 		}
 		else
 		{
-			yLabel2 = showAttribute.attr2.getAxisLabel();
+			yLabel2 = showAttribute.attr2.getAxisLabel() + "\n" + showAttribute.attr1.getUnit();
 		}
 		textAlign(RIGHT, CENTER);
 		text(yLabel2, xPos+xLength-(2*scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
 		
-		line( xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy"),(int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),xPos+xLength-(2*scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()));
+		line( xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy"),(int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()),xPos+xLength-(2*scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()));
 		ellipseMode(RADIUS);
-		ellipse(xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy")/2,(int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),2*scaleFactor,2*scaleFactor);
+		ellipse(xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy")/2,(int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()),2*scaleFactor,2*scaleFactor);
 				
 		// create x axis label
 		textAlign(CENTER, CENTER);
@@ -444,6 +567,7 @@ public void drawVolumeLabels()
 		noFill();
 		
 		stroke(lineColor);
+		strokeWeight(scaleFactor);
 		
 		for(int i = 0 ; i < val.length ; i++ )
 		{
@@ -463,6 +587,7 @@ public void drawVolumeLabels()
 		noFill();
 		
 		stroke(lineColor);
+		strokeWeight(scaleFactor);
 		
 		for(int i = 0 ; i < val.length ; i++ )
 		{
@@ -484,7 +609,7 @@ class GraphCentral
 	int xPos,yPos;
 	PFont font;
 	
-	int selectedTab = 1;
+	int selectedTab = 2;
 	String tabs[] = {"Normal","percentage","Data","Clusters","Map"};
 	
 	int[] tabLeft = new int[5], tabRight = new int[5];
@@ -493,6 +618,7 @@ class GraphCentral
 	Graph graph;
 	Map mymap;
 	PieChart piechart;
+	DataTable datatable;
 	
 	GraphCentral(int xPos, int yPos , PFont font)
 	{
@@ -511,6 +637,7 @@ class GraphCentral
 		graph = new Graph(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 		mymap = new Map(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 		piechart = new PieChart(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
+		datatable = new DataTable(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 	}
 	
 	public void refreshGraphCentral()
@@ -542,6 +669,10 @@ class GraphCentral
 		{
 			piechart.refreshChart();
 		}
+		if(selectedTab == 2)
+		{
+			datatable.refreshTable();
+		}
 		if(selectedTab == 4)
 		{
 			mymap.placeMap();
@@ -559,6 +690,12 @@ class GraphCentral
         			selectedTab = col;
       			}
     		}
+  		}
+  		
+  		
+  		if(selectedTab == 4)
+  		{
+  			mymap.handleMouseClick(xClick,yClick);
   		}
 	}
  
@@ -677,7 +814,10 @@ class Label
 	}
 	
 	public void drawLabel()
-	{			
+	{
+		PFont font = createFont("SansSerif", textFontSize*scaleFactor);
+		cp5.setFont(font);
+					
 		MyControlListener mys = new MyControlListener();		
 		
 		but = cp5.addButton(country)
@@ -690,6 +830,9 @@ class Label
 	
 	public void reDraw(int xPosition,int yPosition)
 	{
+		PFont font = createFont("SansSerif", textFontSize*scaleFactor);
+		cp5.setFont(font);
+		
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
 		
@@ -698,7 +841,7 @@ class Label
 		but = cp5.addButton(country)
      	.setValue(100)
      	.setPosition(xPosition,yPosition)
-     	.setSize(200*scaleFactor,40*scaleFactor)
+     	.setSize(200*scaleFactor,30*scaleFactor)
      	.setColor(countryColor)
      	.addListener(mys);         
 	}
@@ -725,12 +868,12 @@ class Map
 	
 	Map(int xPos,int yPos, int xLength , int yLength)
 	{
-		this.xPos = xPos;
-		this.yPos = yPos;
-		this.xLength = xLength;
-		this.yLength = yLength;
+		this.xPos = xPos + spacing*scaleFactor*2;
+		this.yPos = yPos + spacing*scaleFactor*2;
+		this.xLength = xLength - spacing*scaleFactor*2;
+		this.yLength = yLength - spacing*scaleFactor*2;
 		
-		bot = loadShape("A_large_blank_world_map_with_oceans_marked_in_blue.svg");
+		bot = loadShape("World_map_-_low_resolution.svg");
 		
 	}
 	
@@ -739,10 +882,55 @@ class Map
 		fill(255);
 		rect(xPos,yPos, xLength, yLength);
 		shape(bot, xPos,yPos, xLength, yLength);  
+		
+		//line()
 	}
 	
-	public void handleMouseClick()
+	public void handleMouseClick(int xMouse,int yMouse)
 	{
+		
+		if( xMouse > xPos && xMouse < ( xPos + (xLength * .40f)) )
+		{
+			if(yMouse < yPos + yLength/2 && yMouse > yPos )
+			{
+				showSelectedCountries.addCountry("north america");
+			}
+			else if(yMouse > yPos + yLength/2)
+			{
+				showSelectedCountries.addCountry("south america");
+			}
+		}
+		
+		else if ( (xMouse < xPos + xLength*.62f)  && xMouse > ( xPos + (xLength * .40f)))
+		{
+			if( yMouse > yPos &&  yMouse < yPos + .4f *yLength)
+			{
+				showSelectedCountries.addCountry("europe");
+				
+			}
+			else if (  yMouse > yPos + .4f *yLength)
+			{
+				showSelectedCountries.addCountry("africa");
+				
+			}
+			
+		}
+		
+		else if (xMouse > xPos + xLength*.62f )
+		{
+			if(yMouse > yPos && yMouse < yPos + yLength/2)
+			{
+				showSelectedCountries.addCountry("eurasia");
+				
+			}
+			else
+			{
+				showSelectedCountries.addCountry("asia & oceania");
+				
+			}
+		}
+			
+		
 		
 	}
 }
@@ -828,11 +1016,39 @@ class PieChart
 		else
 		{
 			heading = showAttribute.attr1.getAxisLabel();
-			Set<String> selectCountries = showSelectedCountries.getSelectedCountries();
+			
+			Set<String> tempCountries = showSelectedCountries.getSelectedCountries();
+			String selectCountries[] =  tempCountries.toArray(new String[tempCountries.size()]);
+			
 			int[] percent = atlas.getPercentage(selectCountries,myslider.start,myslider.end,showAttribute.attr1);
 			
+			int centerX = PApplet.parseInt (xPos + (xLength/4));
+			int centerY = PApplet.parseInt (yPos + (yLength/2));
+
+			int diameter = 60*scaleFactor;
+			int  lastAngle = 0;
 			
-			
+			for (int i = 0; i < percent.length; i++)
+			{	
+				int arccolor;			
+    			if( selectCountries.length > 0 && i < selectCountries.length)
+    			{
+    				Label labelTemp = (Label)showSelectedCountries.selectedCountry.get(selectCountries[i]);
+					CColor tempColor = (CColor)labelTemp.countryColor;
+    				arccolor = tempColor.getBackground();
+    				
+    				println(selectCountries[i] + " angle = " + percent[i]);
+    			}
+    			else
+    			{
+    				arccolor = color(255);
+    				println("world" + " angle = " + percent[i]);
+    			}
+    			
+    			fill(arccolor);
+    			arc(centerX, centerY, diameter, diameter, lastAngle, lastAngle+radians(percent[i]) );
+    			lastAngle += radians(percent[i]);
+  			}
 			
 		}
 		
@@ -841,12 +1057,7 @@ class PieChart
 		textAlign(CENTER);
 		fill(255);
 		
-		text(heading,xPos + xLength/4, yPos + (scaleFactor * spacing * 5) );
-		
-		
-		
-		
-		
+		text(heading,xPos + xLength/4, yPos + (scaleFactor * spacing * 5) );		
 		
 	}
 	
@@ -987,7 +1198,7 @@ class ShowSelectedCountries
 			
 			int i = selectedCountry.keySet().size();
 			
-			int yPos = yPosition + i * scaleFactor * (spacing + 30 );
+			int yPos = yPosition + (i * scaleFactor * (spacing + 30 ));
 			
 			Label label = new Label(country,temp,xPosition,yPos);
 			selectedCountry.put(country,label);
@@ -1012,16 +1223,14 @@ class ShowSelectedCountries
 	{
 		int i = 0;
 		try
-		{
-			
-		
+		{		
 		Set<String> listOfCountries = (Set<String>) selectedCountry.keySet();
 		for(String country :  listOfCountries )
 		{
 			Label toShift = (Label) selectedCountry.get(country);
 			toShift.removeLabel();
 			
-			int yPos = yPosition + i * scaleFactor * (spacing + 40 );		
+			int yPos = yPosition + (i * scaleFactor * (spacing + 30 ));		
 			i++;
 			
 			toShift.reDraw(xPosition,yPos);			

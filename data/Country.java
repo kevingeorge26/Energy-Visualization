@@ -26,7 +26,7 @@ public class Country
 	{
 		for(int i = 2 ; i < row.length ; i++ )
 		{
-			energy_production[i-2] = getFloatValue(row[i].trim());
+			energy_production[i-2] = getFloatValue(row[i].trim()) * 10;
 		}
 	}
 	
@@ -34,7 +34,7 @@ public class Country
 	{
 		for(int i = 2 ; i < row.length ; i++ )
 		{
-			energy_consumption[i-2] = getFloatValue(row[i].trim());
+			energy_consumption[i-2] = getFloatValue(row[i].trim()) * 10;
 		}
 	}
 	
@@ -66,7 +66,7 @@ public class Country
 	{
 		for(int i = 2 ; i < row.length ; i++ )
 		{
-			electricty[i-2] = getFloatValue(row[i].trim());
+			electricty[i-2] = getFloatValue(row[i].trim()) *10;
 		}
 	}
 	

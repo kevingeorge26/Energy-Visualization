@@ -20,3 +20,10 @@ void draw() {
     lastAngle += radians(angles[i]);
   }
 }
+
+
+
+
+
+
+central & south america

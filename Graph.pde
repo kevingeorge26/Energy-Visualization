@@ -22,8 +22,7 @@ class Graph
 		createAxis();
 		createLabels();
 		drawYearLabels();
-		createDataLines();
-		
+		createDataLines();		
 		drawVolumeLabels();
 	}
 	
@@ -50,8 +49,8 @@ class Graph
 	}
 	
 	
-	int volumeIntervalMinor = 5;   // Add this above setup()
-	int volumeInterval = 10;
+	int volumeIntervalMinor = 50;   // Add this above setup()
+	int volumeInterval = 100;
 
 void drawVolumeLabels()
 {
@@ -112,6 +111,7 @@ void drawVolumeLabels()
 	void createLabels()
 	{
 		String yLabel1;
+		strokeWeight(scaleFactor);
 			
 		// create first y label
 		if(showAttribute.attr1 == null)
@@ -120,7 +120,7 @@ void drawVolumeLabels()
 		}
 		else
 		{
-			yLabel1 = showAttribute.attr1.getAxisLabel();
+			yLabel1 = showAttribute.attr1.getAxisLabel() + "\n" + showAttribute.attr1.getUnit();
 		}
 		
 		fill(255);
@@ -129,7 +129,7 @@ void drawVolumeLabels()
 		textLeading(12*scaleFactor);		
 		text(yLabel1, xPos+(scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
 		
-		line(xPos+(scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),xPos+(scaleFactor*spacing)+textWidth("Total Energy"), (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()));
+		line(xPos+(scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()),xPos+(scaleFactor*spacing)+textWidth("Total Energy"), (int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()));
 		
 		String yLabel2;
 			
@@ -140,14 +140,14 @@ void drawVolumeLabels()
 		}
 		else
 		{
-			yLabel2 = showAttribute.attr2.getAxisLabel();
+			yLabel2 = showAttribute.attr2.getAxisLabel() + "\n" + showAttribute.attr1.getUnit();
 		}
 		textAlign(RIGHT, CENTER);
 		text(yLabel2, xPos+xLength-(2*scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
 		
-		line( xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy"),(int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),xPos+xLength-(2*scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()));
+		line( xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy"),(int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()),xPos+xLength-(2*scaleFactor*spacing) , (int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()));
 		ellipseMode(RADIUS);
-		ellipse(xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy")/2,(int)(plotY1+plotY2)/2 + scaleFactor*3*(textAscent()+textDescent()),2*scaleFactor,2*scaleFactor);
+		ellipse(xPos+xLength-(2*scaleFactor*spacing)-textWidth("Total Energy")/2,(int)(plotY1+plotY2)/2 + 4*(textAscent()+textDescent()),2*scaleFactor,2*scaleFactor);
 				
 		// create x axis label
 		textAlign(CENTER, CENTER);
@@ -209,6 +209,7 @@ void drawVolumeLabels()
 		noFill();
 		
 		stroke(lineColor);
+		strokeWeight(scaleFactor);
 		
 		for(int i = 0 ; i < val.length ; i++ )
 		{
@@ -228,6 +229,7 @@ void drawVolumeLabels()
 		noFill();
 		
 		stroke(lineColor);
+		strokeWeight(scaleFactor);
 		
 		for(int i = 0 ; i < val.length ; i++ )
 		{

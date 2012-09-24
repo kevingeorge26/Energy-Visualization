@@ -374,9 +374,9 @@ public class Atlas
 	
 	// for pie chart
 	
-	public int[] getPercentage(Set<String> countries , int startYear,int endYear,Attribute attr )
+	public int[] getPercentage(String[] countries , int startYear,int endYear,Attribute attr )
 	{
-		float[] toStore = new float[countries.size()];
+		float[] toStore = new float[countries.length];
 		int track = 0;
 		
 		for(String country :  countries )
@@ -393,7 +393,7 @@ public class Atlas
 		
 		for(int i = 0 ; i < toStore.length ; i++ )
 		{
-			percent[i] = (int) Math.ceil( (toStore[i]/total) * 100 );
+			percent[i] = (int) Math.ceil( (toStore[i]/total) * 360 );
 			track += percent[i];
 		}
 		

@@ -19,7 +19,10 @@ class Label
 	}
 	
 	void drawLabel()
-	{			
+	{
+		PFont font = createFont("SansSerif", textFontSize*scaleFactor);
+		cp5.setFont(font);
+					
 		MyControlListener mys = new MyControlListener();		
 		
 		but = cp5.addButton(country)
@@ -32,6 +35,9 @@ class Label
 	
 	void reDraw(int xPosition,int yPosition)
 	{
+		PFont font = createFont("SansSerif", textFontSize*scaleFactor);
+		cp5.setFont(font);
+		
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
 		
@@ -40,7 +46,7 @@ class Label
 		but = cp5.addButton(country)
      	.setValue(100)
      	.setPosition(xPosition,yPosition)
-     	.setSize(200*scaleFactor,40*scaleFactor)
+     	.setSize(200*scaleFactor,30*scaleFactor)
      	.setColor(countryColor)
      	.addListener(mys);         
 	}

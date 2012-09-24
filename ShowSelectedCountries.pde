@@ -35,7 +35,7 @@ class ShowSelectedCountries
 			
 			int i = selectedCountry.keySet().size();
 			
-			int yPos = yPosition + i * scaleFactor * (spacing + 30 );
+			int yPos = yPosition + (i * scaleFactor * (spacing + 30 ));
 			
 			Label label = new Label(country,temp,xPosition,yPos);
 			selectedCountry.put(country,label);
@@ -60,16 +60,14 @@ class ShowSelectedCountries
 	{
 		int i = 0;
 		try
-		{
-			
-		
+		{		
 		Set<String> listOfCountries = (Set<String>) selectedCountry.keySet();
 		for(String country :  listOfCountries )
 		{
 			Label toShift = (Label) selectedCountry.get(country);
 			toShift.removeLabel();
 			
-			int yPos = yPosition + i * scaleFactor * (spacing + 40 );		
+			int yPos = yPosition + (i * scaleFactor * (spacing + 30 ));		
 			i++;
 			
 			toShift.reDraw(xPosition,yPos);			

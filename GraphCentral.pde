@@ -3,7 +3,7 @@ class GraphCentral
 	int xPos,yPos;
 	PFont font;
 	
-	int selectedTab = 1;
+	int selectedTab = 2;
 	String tabs[] = {"Normal","percentage","Data","Clusters","Map"};
 	
 	int[] tabLeft = new int[5], tabRight = new int[5];
@@ -12,6 +12,7 @@ class GraphCentral
 	Graph graph;
 	Map mymap;
 	PieChart piechart;
+	DataTable datatable;
 	
 	GraphCentral(int xPos, int yPos , PFont font)
 	{
@@ -30,6 +31,7 @@ class GraphCentral
 		graph = new Graph(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 		mymap = new Map(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 		piechart = new PieChart(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
+		datatable = new DataTable(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 	}
 	
 	void refreshGraphCentral()
@@ -61,6 +63,10 @@ class GraphCentral
 		{
 			piechart.refreshChart();
 		}
+		if(selectedTab == 2)
+		{
+			datatable.refreshTable();
+		}
 		if(selectedTab == 4)
 		{
 			mymap.placeMap();
@@ -78,6 +84,12 @@ class GraphCentral
         			selectedTab = col;
       			}
     		}
+  		}
+  		
+  		
+  		if(selectedTab == 4)
+  		{
+  			mymap.handleMouseClick(xClick,yClick);
   		}
 	}
  
