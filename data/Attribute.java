@@ -7,8 +7,8 @@ public enum Attribute
 	CO2_EMISSION("Total CO2 Emission","Total\nCO2\nEmission","in MMT"),
 	CO2_EMISSION_CAPITA("Total CO2 Emission per Capita","Total CO2\nEmission\nper Capita","in MT"),
 	ELECTRICTY_GENERATION("Total Electricity Genaration","Total Electricity\nGenaration", " in BkWH"),	
-	ENERGY_PRODUCTION_CAPITA("Total Energy Production per Capita","Total Energy\nProduction\nper Capita","in MMBtu"),
-	ELECTRICTY_GENERATION_CAPITA("Electricity Genaration per capita", "Total Elec generation\nper Capita","in kWH");
+	ENERGY_PRODUCTION_CAPITA("Total Energy Production per Capita","Total Energy\nProduction\nper Capita"," in MMBtu"),
+	ELECTRICTY_GENERATION_CAPITA("Electricity Genaration per capita", "Elec. generation\nper Capita"," in kWH");
 
 	String label,axis,unit;
 	

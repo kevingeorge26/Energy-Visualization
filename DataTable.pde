@@ -29,7 +29,7 @@ class DataTable
 			}			
 			else
 			{
-				label1 = showAttribute.attr2.getLabel() + showAttribute.attr1.getUnit();
+				label1 = showAttribute.attr1.getLabel() + showAttribute.attr1.getUnit();
 				attr1 = showAttribute.attr1;
 			}
 			

@@ -502,7 +502,7 @@ class DataTable
 			}			
 			else
 			{
-				label1 = showAttribute.attr2.getLabel() + showAttribute.attr1.getUnit();
+				label1 = showAttribute.attr1.getLabel() + showAttribute.attr1.getUnit();
 				attr1 = showAttribute.attr1;
 			}
 			
@@ -623,8 +623,8 @@ class Graph
 	}
 	
 	
-	int volumeIntervalMinor = 50;   // Add this above setup()
-	int volumeInterval = 100;
+	int volumeIntervalMinor = 100;   // Add this above setup()
+	int volumeInterval = 200;
 
 public void drawVolumeLabels()
 {
@@ -714,7 +714,7 @@ public void drawVolumeLabels()
 		}
 		else
 		{
-			yLabel2 = showAttribute.attr2.getAxisLabel() + "\n" + showAttribute.attr1.getUnit();
+			yLabel2 = showAttribute.attr2.getAxisLabel() + "\n" + showAttribute.attr2.getUnit();
 		}
 		textAlign(RIGHT, CENTER);
 		text(yLabel2, xPos+xLength-(2*scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
