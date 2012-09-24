@@ -1,4 +1,4 @@
-class Cluster
+class Cluster2
 {
 	int xPos,yPos,xLength,yLength;
 	
@@ -10,7 +10,7 @@ class Cluster
 	
 	float maxValueY,maxValueX;
 	
-	Cluster(int xPos,int yPos, int xLength , int yLength)
+	Cluster2(int xPos,int yPos, int xLength , int yLength)
 	{
 		this.xPos = xPos;
 		this.yPos = yPos;
@@ -69,12 +69,12 @@ class Cluster
 		PFont font = createFont("SansSerif", 10*scaleFactor);
 		textFont(font);
 		textLeading(12*scaleFactor);		
-		text("Energy Production\n" + "per capita\n" + "in MMBtu", xPos+(scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
+		text("Electicity Prod\n" + "per capita\n" + "in kWH", xPos+(scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);
 		
 				
 		// create x axis label
 		textAlign(CENTER, CENTER);
-		text("Energy Consumption " + "per capita" + "  in MMBtu",(int)(plotX1+plotX2)/2, yPos + yLength - (50*scaleFactor));
+		text("CO2 Emission " + "per capita" + "  in MT",(int)(plotX1+plotX2)/2, yPos + yLength - (50*scaleFactor));
 		textAlign(LEFT, CENTER);
 	}	
 	
@@ -83,17 +83,17 @@ class Cluster
 	{
 		Set<String> selectCountries = showSelectedCountries.getSelectedCountries();
 		
-		maxValueY = atlas.getBiggestValue(selectCountries,1980,2009 ,Attribute.ENERGY_PRODUCTION_CAPITA , null);
+		maxValueY = atlas.getBiggestValue(selectCountries,1980,2009 ,Attribute.ELECTRICTY_GENERATION_CAPITA , null);
 		//println("maxValueY" + maxValueY);
-		maxValueX = atlas.getBiggestValue(selectCountries,1980,2009 ,Attribute.ENERGY_CONSUMPTION_CAPITA , null);
+		maxValueX = atlas.getBiggestValue(selectCountries,1980,2009 ,Attribute.CO2_EMISSION_CAPITA , null);
 		
 		for(String country :  selectCountries )
 		{
 			Label labelTemp = (Label)showSelectedCountries.selectedCountry.get(country);
 			CColor tempColor = (CColor)labelTemp.countryColor;
 			
-			float[] valy = atlas.getAttrValue(country,myslider.start,myslider.end,Attribute.ENERGY_PRODUCTION_CAPITA);
-			float[] valx = atlas.getAttrValue(country,myslider.start,myslider.end,Attribute.ENERGY_CONSUMPTION_CAPITA);
+			float[] valy = atlas.getAttrValue(country,myslider.start,myslider.end,Attribute.ELECTRICTY_GENERATION_CAPITA);
+			float[] valx = atlas.getAttrValue(country,myslider.start,myslider.end,Attribute.CO2_EMISSION_CAPITA);
 								
 			plotPoints(valx,valy,tempColor.getBackground());
 		}

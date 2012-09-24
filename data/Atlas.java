@@ -44,6 +44,18 @@ public class Atlas
 		loadco2();
 		loadco2capita();
 		loadElec();
+		
+		generatePerCapitaValues();
+	}
+	
+	
+	private void generatePerCapitaValues()
+	{
+		for(String country : countries.keySet())
+		{
+			((Country)countries.get(country)).loadEnergyProductionPerCapita();
+			((Country)countries.get(country)).loadElecCapita();
+		}
 	}
 
 	private void loadEnergyProduction()

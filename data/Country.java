@@ -16,11 +16,32 @@ public class Country
 	float[] co2_capita = new float[30];
 	float[] electricty = new float[30];
 	
+	float[] energy_production_capita = new float[30];
+	float[] elec_per_capita = new float[30]; // in kilo watt
+	
 
 	Country(String name)
 	{
 		this.name = name;
-	}	
+	}
+	
+	public void loadElecCapita()
+	{
+
+		for( int i = 0 ; i < 30 ; i++ )
+		{
+			elec_per_capita[i] = electricty[i] * energy_consumption_capita[i] / energy_consumption[i];
+		}
+	}
+	
+	
+	public void loadEnergyProductionPerCapita()
+	{
+		for( int i = 0 ; i < 30 ; i++ )
+		{
+			energy_production_capita[i] = energy_production[i] * energy_consumption_capita[i] / energy_consumption[i];
+		}
+	}
 
 	public void loadEnergyProduction(String[] row)
 	{
@@ -129,6 +150,16 @@ public class Country
 		else if(Attribute.ELECTRICTY_GENERATION == attr)
 		{
 			return electricty;
+		}
+		
+		else if(Attribute.ENERGY_PRODUCTION_CAPITA == attr)
+		{
+			return energy_production_capita;
+		}
+		
+		else if(Attribute.ELECTRICTY_GENERATION_CAPITA == attr)
+		{
+			return elec_per_capita;
 		}
 		
 		else

@@ -4,15 +4,17 @@ class GraphCentral
 	PFont font;
 	
 	int selectedTab = 2;
-	String tabs[] = {"Normal","percentage","Data","Clusters","Map"};
+	String tabs[] = {"Normal","percentage","Data","Finding1","Map","Finding2"};
 	
-	int[] tabLeft = new int[5], tabRight = new int[5];
+	int[] tabLeft = new int[6], tabRight = new int[6];
 	int tabTop,tabBottom,tabPad = 10*scaleFactor;
 	
 	Graph graph;
 	Map mymap;
 	PieChart piechart;
 	DataTable datatable;
+	Cluster cluster;
+	Cluster2 cluster2;
 	
 	GraphCentral(int xPos, int yPos , PFont font)
 	{
@@ -32,6 +34,8 @@ class GraphCentral
 		mymap = new Map(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 		piechart = new PieChart(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 		datatable = new DataTable(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
+		cluster = new Cluster(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
+		cluster2 = new Cluster2(xPos,yPos,width-xPos-spacing*scaleFactor,height - yPos - spacing*scaleFactor);
 	}
 	
 	void refreshGraphCentral()
@@ -67,9 +71,17 @@ class GraphCentral
 		{
 			datatable.refreshTable();
 		}
+		if(selectedTab == 3)
+		{
+			cluster.refreshGraph();
+		}
 		if(selectedTab == 4)
 		{
 			mymap.placeMap();
+		}
+		if(selectedTab == 5)
+		{
+			cluster2.refreshGraph();
 		}
 	}
 	
