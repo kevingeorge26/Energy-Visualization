@@ -16,11 +16,11 @@ class GraphCentral
 	Cluster cluster;
 	Cluster2 cluster2;
 	
-	GraphCentral(int xPos, int yPos , PFont font)
+	GraphCentral(int xPos, int yPos )
 	{
 		this.xPos = xPos;
 		this.yPos = yPos;
-		this.font = font;	
+		this.font = createFont("SansSerif", 10*scaleFactor);
 		
 		tabBottom = yPos;
 		tabTop = yPos - (int)textAscent() - 10*scaleFactor;
@@ -51,7 +51,7 @@ class GraphCentral
 			
 			tabLeft[i] = runningX;
 			int tabWidth = (int)textWidth(tab);
-			tabRight[i] = runningX + tabWidth + 2*scaleFactor*tabPad;			
+			tabRight[i] = runningX + tabWidth + 1*scaleFactor*tabPad;			
 						
 			fill( selectedTab == i ? 255 : 100 );
 			text(tab,tabLeft[i],tabBottom);

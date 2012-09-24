@@ -15,7 +15,7 @@ Atlas atlas;
 
 int spacing = 5;
 int textFontSize = 15;
-int scaleFactor = 1;
+int scaleFactor =6;
 int inputHeight = 30;
 int distancefromTop = 100;
 int startYear = 1980;
@@ -45,7 +45,7 @@ void setup()
 	showSelectedCountries = new ShowSelectedCountries();
 	showAttribute = new ShowAttribute(showSelectedCountries.xPosition,showSelectedCountries.yPosition);
 	myslider = new Myslider(showAttribute.xPos , keyboard.rowTwoY , 314*scaleFactor , 40*scaleFactor);
-	graphCentral = new GraphCentral(myslider.xPos + myslider.sLength + spacing*scaleFactor,showSelectedCountries.yPosition,font);
+	graphCentral = new GraphCentral(myslider.xPos + myslider.sLength + spacing*scaleFactor,showSelectedCountries.yPosition);
 	
 	// java classes
 	atlas = new Atlas();

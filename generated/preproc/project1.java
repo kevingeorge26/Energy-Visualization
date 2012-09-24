@@ -838,11 +838,11 @@ class GraphCentral
 	Cluster cluster;
 	Cluster2 cluster2;
 	
-	GraphCentral(int xPos, int yPos , PFont font)
+	GraphCentral(int xPos, int yPos )
 	{
 		this.xPos = xPos;
 		this.yPos = yPos;
-		this.font = font;	
+		this.font = createFont("SansSerif", 10*scaleFactor);
 		
 		tabBottom = yPos;
 		tabTop = yPos - (int)textAscent() - 10*scaleFactor;
@@ -873,7 +873,7 @@ class GraphCentral
 			
 			tabLeft[i] = runningX;
 			int tabWidth = (int)textWidth(tab);
-			tabRight[i] = runningX + tabWidth + 2*scaleFactor*tabPad;			
+			tabRight[i] = runningX + tabWidth + 1*scaleFactor*tabPad;			
 						
 			fill( selectedTab == i ? 255 : 100 );
 			text(tab,tabLeft[i],tabBottom);
@@ -1186,7 +1186,7 @@ class Myslider
              // disable broadcasting since setRange and setRangeValues will trigger an event
              .setBroadcast(false) 
              .setPosition(xPos,yPos)
-             .setSize(314,40)
+             .setSize(sLength,sHeight)
              .setHandleSize(20*scaleFactor)
              .setRange(1980,2008)
              .setRangeValues(1980,2008)
@@ -1229,7 +1229,7 @@ class PieChart
 	{
 		
 			createCircle1();	
-			createCircle2();
+		//	createCircle2();
 		
 	}
 	
@@ -1253,26 +1253,31 @@ class PieChart
 			int centerX = PApplet.parseInt (xPos + (xLength/4));
 			int centerY = PApplet.parseInt (yPos + (yLength/2));
 
-			int diameter = 60*scaleFactor;
-			int  lastAngle = 0;
+			int diameter = 100*scaleFactor;
+			int lastAngle = 0;
+			
+			println("*************************************************88");
+			Label labelTemp;
+			CColor tempColor;
 			
 			for (int i = 0; i < percent.length; i++)
 			{	
 				int arccolor;			
     			if( selectCountries.length > 0 && i < selectCountries.length)
     			{
-    				Label labelTemp = (Label)showSelectedCountries.selectedCountry.get(selectCountries[i]);
-					CColor tempColor = (CColor)labelTemp.countryColor;
+    				labelTemp = (Label)showSelectedCountries.selectedCountry.get(selectCountries[i]);
+					tempColor = (CColor)labelTemp.countryColor;
     				arccolor = tempColor.getBackground();
     				
     				println(selectCountries[i] + " angle = " + percent[i]);
     			}
     			else
     			{
-    				arccolor = color(255);
+    				arccolor = 255;
     				println("world" + " angle = " + percent[i]);
     			}
     			
+    			//noStroke();
     			fill(arccolor);
     			arc(centerX, centerY, diameter, diameter, lastAngle, lastAngle+radians(percent[i]) );
     			lastAngle += radians(percent[i]);
@@ -1281,11 +1286,11 @@ class PieChart
 		}
 		
 		PFont font = createFont("SansSerif", 10*scaleFactor);
-		textFont(font);
-		textAlign(CENTER);
-		fill(255);
+		//textFont(font);
+		//textAlign(CENTER);
+		//fill(255);
 		
-		text(heading,xPos + xLength/4, yPos + (scaleFactor * spacing * 5) );		
+		//text(heading,xPos + xLength/4, yPos + (scaleFactor * spacing * 5) );		
 		
 	}
 	
@@ -1496,7 +1501,7 @@ Atlas atlas;
 
 int spacing = 5;
 int textFontSize = 15;
-int scaleFactor = 1;
+int scaleFactor =6;
 int inputHeight = 30;
 int distancefromTop = 100;
 int startYear = 1980;
@@ -1526,7 +1531,7 @@ public void setup()
 	showSelectedCountries = new ShowSelectedCountries();
 	showAttribute = new ShowAttribute(showSelectedCountries.xPosition,showSelectedCountries.yPosition);
 	myslider = new Myslider(showAttribute.xPos , keyboard.rowTwoY , 314*scaleFactor , 40*scaleFactor);
-	graphCentral = new GraphCentral(myslider.xPos + myslider.sLength + spacing*scaleFactor,showSelectedCountries.yPosition,font);
+	graphCentral = new GraphCentral(myslider.xPos + myslider.sLength + spacing*scaleFactor,showSelectedCountries.yPosition);
 	
 	// java classes
 	atlas = new Atlas();

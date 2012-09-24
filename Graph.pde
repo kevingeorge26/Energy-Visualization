@@ -120,7 +120,7 @@ void drawVolumeLabels()
 		}
 		else
 		{
-			yLabel1 = showAttribute.attr2.getAxisLabel() + "\n" + showAttribute.attr2.getUnit();
+			yLabel1 = showAttribute.attr1.getAxisLabel() + "\n" + showAttribute.attr1.getUnit();
 		}
 		
 		fill(255);
@@ -140,7 +140,7 @@ void drawVolumeLabels()
 		}
 		else
 		{
-			yLabel2 = showAttribute.attr1.getAxisLabel() + "\n" + showAttribute.attr1.getUnit();
+			yLabel2 = showAttribute.attr2.getAxisLabel() + "\n" + showAttribute.attr2.getUnit();
 		}
 		textAlign(RIGHT, CENTER);
 		text(yLabel2, xPos+xLength-(2*scaleFactor*spacing) ,(int)(plotY1+plotY2)/2);

@@ -22,7 +22,7 @@ class Myslider
              // disable broadcasting since setRange and setRangeValues will trigger an event
              .setBroadcast(false) 
              .setPosition(xPos,yPos)
-             .setSize(314,40)
+             .setSize(sLength,sHeight)
              .setHandleSize(20*scaleFactor)
              .setRange(1980,2008)
              .setRangeValues(1980,2008)

@@ -15,7 +15,7 @@ class PieChart
 	{
 		
 			createCircle1();	
-			createCircle2();
+		//	createCircle2();
 		
 	}
 	
@@ -39,26 +39,31 @@ class PieChart
 			int centerX = int (xPos + (xLength/4));
 			int centerY = int (yPos + (yLength/2));
 
-			int diameter = 60*scaleFactor;
-			int  lastAngle = 0;
+			int diameter = 100*scaleFactor;
+			int lastAngle = 0;
+			
+			println("*************************************************88");
+			Label labelTemp;
+			CColor tempColor;
 			
 			for (int i = 0; i < percent.length; i++)
 			{	
 				int arccolor;			
     			if( selectCountries.length > 0 && i < selectCountries.length)
     			{
-    				Label labelTemp = (Label)showSelectedCountries.selectedCountry.get(selectCountries[i]);
-					CColor tempColor = (CColor)labelTemp.countryColor;
+    				labelTemp = (Label)showSelectedCountries.selectedCountry.get(selectCountries[i]);
+					tempColor = (CColor)labelTemp.countryColor;
     				arccolor = tempColor.getBackground();
     				
     				println(selectCountries[i] + " angle = " + percent[i]);
     			}
     			else
     			{
-    				arccolor = color(255);
+    				arccolor = 255;
     				println("world" + " angle = " + percent[i]);
     			}
     			
+    			//noStroke();
     			fill(arccolor);
     			arc(centerX, centerY, diameter, diameter, lastAngle, lastAngle+radians(percent[i]) );
     			lastAngle += radians(percent[i]);
@@ -67,11 +72,11 @@ class PieChart
 		}
 		
 		PFont font = createFont("SansSerif", 10*scaleFactor);
-		textFont(font);
-		textAlign(CENTER);
-		fill(255);
+		//textFont(font);
+		//textAlign(CENTER);
+		//fill(255);
 		
-		text(heading,xPos + xLength/4, yPos + (scaleFactor * spacing * 5) );		
+		//text(heading,xPos + xLength/4, yPos + (scaleFactor * spacing * 5) );		
 		
 	}
 	
