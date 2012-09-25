@@ -2,6 +2,7 @@ import processing.core.*;
 import processing.xml.*; 
 
 import controlP5.*; 
+import omicronAPI.*; 
 
 import java.applet.*; 
 import java.awt.Dimension; 
@@ -1189,12 +1190,14 @@ class Myslider
              .setSize(sLength,sHeight)
              .setHandleSize(20*scaleFactor)
              .setRange(1980,2008)
-             .setRangeValues(1980,2008)
+             
              // after the initialization we turn broadcast back on again
              .setBroadcast(true)
              .setColorForeground(0xffFFFFFF)
              .setColorBackground(color(255,40))
              .addListener(myListner)
+             .setDecimalPrecision(0) 
+             .setRangeValues(1980,2008)            
              ;
              
          
@@ -1342,7 +1345,7 @@ class ShowAttribute
 		
 		for (int i = 0 ; i < checkbox.length ; i++ )
 		{
-			checkbox[i] = new Checkbox( xPos, yPos + i* (spacing*2*scaleFactor + ((int)textAscent())), fontC, Attribute.values()[i]);
+			checkbox[i] = new Checkbox( xPos, yPos + i* (spacing*3*scaleFactor + ((int)textAscent())), fontC, Attribute.values()[i]);
 		}	
 		
 	}
@@ -1484,6 +1487,44 @@ class ShowSelectedCountries
 	
 		
 }
+class TouchListener implements OmicronTouchListener{
+ 
+  // Called on a touch down event
+  // mousePressed events also call this with an ID of -1 and an xWidth and yWidth of 10.
+  public void touchDown(int ID, float xPos, float yPos, float xWidth, float yWidth){
+    fill(255,0,0);
+    noStroke();
+    ellipse( xPos, yPos, xWidth, yWidth );
+    
+    // This is an optional call if you want the function call in the main applet class.
+    // 'OmicronExample' should be replaced with the sketch name i.e. ((SketchName)applet).touchDown( ID, xPos, yPos, xWidth, yWidth );
+    // Make sure applet is defined as PApplet and that 'applet = this;' is in setup().
+    ((project1)applet).touchDown( ID, xPos, yPos, xWidth, yWidth );
+  }// touchDown
+  
+  // Called on a touch move event
+  // mouseDragged events also call this with an ID of -1 and an xWidth and yWidth of 10.
+  public void touchMove(int ID, float xPos, float yPos, float xWidth, float yWidth){
+    fill(0,255,0);
+    noStroke();
+    ellipse( xPos, yPos, xWidth, yWidth );
+    
+    ((project1)applet).touchMove( ID, xPos, yPos, xWidth, yWidth );
+  }// touchMove
+  
+  // Called on a touch up event
+  // mouseReleased events also call this with an ID of -1 and an xWidth and yWidth of 10.
+  public void touchUp(int ID, float xPos, float yPos, float xWidth, float yWidth){
+    fill(0,0,255);
+    noStroke();
+    ellipse( xPos, yPos, xWidth, yWidth );
+    
+    ((project1)applet).touchUp( ID, xPos, yPos, xWidth, yWidth );
+  }// touchUp
+  
+}// TouchListener
+
+
 
 
 ControlP5 cp5;
@@ -1499,9 +1540,30 @@ Myslider myslider;
 Atlas atlas;
 
 
+OmicronAPI omicronManager;
+TouchListener touchListener;
+PApplet applet;
+
+// Override of PApplet init() which is called before setup()
+public void init() {
+  super.init();
+ 
+  // Creates the OmicronAPI object. This is placed in init() since we want to use fullscreen
+  omicronManager = new OmicronAPI(this);
+ 
+  // Removes the title bar for full screen mode (present mode will not work on Cyber-commons wall)
+ //omicronManager.setFullscreen(true);
+}
+
+
+
+
+
+
+
 int spacing = 5;
 int textFontSize = 15;
-int scaleFactor =6;
+int scaleFactor =1;
 int inputHeight = 30;
 int distancefromTop = 100;
 int startYear = 1980;
@@ -1515,6 +1577,17 @@ boolean firstTime = true;
 public void setup()
 {
 	size(1360*scaleFactor,384*scaleFactor,JAVA2D);
+	applet = this;
+	omicronManager.ConnectToTracker(7001, 7340, "131.193.77.159");
+ 
+  // Create a listener to get events
+  touchListener = new TouchListener();
+ 
+  // Register listener with OmicronAPI
+  omicronManager.setTouchListener(touchListener);
+  
+	
+	
 	//background(139,139,137);
 
 	cp5 = new ControlP5(this);
@@ -1540,7 +1613,8 @@ public void setup()
 public void draw()
 { 	
 	background(20);
-	
+	 omicronManager.process();  
+	 
 	if(firstTime)
 	{
 		try
@@ -1560,10 +1634,40 @@ public void draw()
 	
 }
 
+
+public void touchDown(int ID, float xPos, float yPos, float xWidth, float yWidth)
+{
+//mouseX = (int)xPos;
+//mouseY = (int)yPos;
+
+ cp5.getPointer().set((int) xPos, (int) yPos);
+ cp5.getPointer().pressed();
+ showAttribute.handleMouseClick( (int) xPos, (int) yPos);
+ graphCentral.handleMouseClick((int) xPos, (int) yPos);
+
+//mousePressed();
+
+}// touchDown
+
+public void touchUp(int ID, float xPos, float yPos, float xWidth, float yWidth)
+{
+ 
+  cp5.getPointer().released();
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+public void touchMove(int ID, float xPos, float yPos, float xWidth, float yWidth){
+ 
+}// touchMove
+
+
+
+
+
 public void mousePressed()
 {
-	 showAttribute.handleMouseClick(mouseX,mouseY);
-	 graphCentral.handleMouseClick(mouseX,mouseY);
+	 
 } 
 
 public void controlEvent(ControlEvent theEvent) 

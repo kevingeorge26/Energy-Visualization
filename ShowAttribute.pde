@@ -21,7 +21,7 @@ class ShowAttribute
 		
 		for (int i = 0 ; i < checkbox.length ; i++ )
 		{
-			checkbox[i] = new Checkbox( xPos, yPos + i* (spacing*2*scaleFactor + ((int)textAscent())), fontC, Attribute.values()[i]);
+			checkbox[i] = new Checkbox( xPos, yPos + i* (spacing*3*scaleFactor + ((int)textAscent())), fontC, Attribute.values()[i]);
 		}	
 		
 	}

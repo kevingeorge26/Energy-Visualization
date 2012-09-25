@@ -25,12 +25,14 @@ class Myslider
              .setSize(sLength,sHeight)
              .setHandleSize(20*scaleFactor)
              .setRange(1980,2008)
-             .setRangeValues(1980,2008)
+             
              // after the initialization we turn broadcast back on again
              .setBroadcast(true)
              .setColorForeground(0xffFFFFFF)
              .setColorBackground(color(255,40))
              .addListener(myListner)
+             .setDecimalPrecision(0) 
+             .setRangeValues(1980,2008)            
              ;
              
          
